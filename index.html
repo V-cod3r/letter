@@ -133,6 +133,12 @@
   .letter-slip.is-read.dropped { opacity: 0.45; }
   @keyframes dropIn { from { opacity: 0; transform: rotate(calc(var(--r)*1deg)) translateY(-40px) scale(0.8); } to { opacity: 1; transform: rotate(calc(var(--r)*1deg)) translateY(0) scale(1); } }
 
+  .shared-banner { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 20px; font-family: 'Cormorant Garamond', serif; font-size: 0.82rem; letter-spacing: 0.08em; pointer-events: none; transition: opacity 0.5s; }
+  .shared-banner.live { background: rgba(10,30,10,0.85); border: 1px solid rgba(40,160,60,0.35); color: rgba(100,220,120,0.8); }
+  .shared-banner.local { background: rgba(30,20,5,0.85); border: 1px solid rgba(200,160,60,0.3); color: rgba(210,170,80,0.7); }
+  .shared-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .shared-banner.live .shared-dot { background: #40c060; box-shadow: 0 0 6px rgba(60,200,80,0.7); animation: pulse-dot 1.8s ease-in-out infinite; }
+  .shared-banner.local .shared-dot { background: #c8a040; }
   .unread-dot { position: absolute; top: 3px; right: 3px; width: 5px; height: 5px; border-radius: 50%; background: var(--crimson-bright); box-shadow: 0 0 4px rgba(200,25,42,0.9); animation: pulse-dot 1.8s ease-in-out infinite; }
   @keyframes pulse-dot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } }
 
@@ -601,6 +607,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="shared-banner" id="sharedBanner" style="opacity:0"></div>
 
 <script>
 // ═══════════════════════════════════════════
@@ -710,20 +717,54 @@ function startPolling() {
   if (pollTimer) clearInterval(pollTimer);
   pollTimer = setInterval(async () => {
     try {
+      // Poll letters for current jar
       const r = await storage.get('letters:' + currentJarId, true);
       const loaded = r ? JSON.parse(r.value) : [];
-      if (loaded.length !== letters.length) {
-        const prev = letters.length;
+      const existingIds = new Set(letters.map(l => l.id));
+      const loadedIds = new Set(loaded.map(l => l.id));
+      const hasChanges = loaded.length !== letters.length || loaded.some(l => !existingIds.has(l.id));
+      if (hasChanges) {
+        const prevIds = new Set(letters.map(l => l.id));
         letters = loaded;
-        for (let i = prev; i < letters.length; i++) {
-          addSlipToJar(letters[i], true);
-          addCardToPanel(letters[i], true);
+        for (const l of loaded) {
+          if (!prevIds.has(l.id)) {
+            const hint = document.getElementById('emptyHint');
+            if (hint) hint.remove();
+            addSlipToJar(l, true);
+            addCardToPanel(l, true);
+          }
+        }
+        for (const id of prevIds) {
+          if (!loadedIds.has(id)) {
+            const slip = document.getElementById('slip-' + id);
+            if (slip) slip.remove();
+            document.querySelectorAll('#card-' + id).forEach(c => c.remove());
+          }
+        }
+        if (letters.length === 0) {
+          const jar = document.getElementById('jarLetters');
+          jar.innerHTML = '<div class="empty-hint" id="emptyHint">no letters yet…<br>be the first</div>';
         }
         updateStats();
+        updateNoUnreadHint();
+        renderReadJar();
         renderJarDropdown();
       }
+
+      // Poll jars list for changes from other users
+      const jr = await storage.get('jars', true);
+      const loadedJars = jr ? JSON.parse(jr.value) : [];
+      const jarChanged = loadedJars.length !== jars.length || loadedJars.some(j => !jars.find(x => x.id === j.id));
+      if (jarChanged) {
+        jars = loadedJars;
+        renderJarDropdown();
+        updateJarContext();
+        if (!jars.find(j => j.id === currentJarId) && jars.length > 0) {
+          await switchToJar(jars[0].id, false);
+        }
+      }
     } catch {}
-  }, 7000);
+  }, 3000);
 }
 
 // ═══════════════════════════════════════════
@@ -1195,6 +1236,15 @@ const storage = window.storage || (() => {
       } catch { return { keys: [] }; }
     }
   };
+})();
+
+// Show shared/local status banner
+(function() {
+  const banner = document.getElementById('sharedBanner');
+  const isLive = !!window.storage;
+  banner.className = 'shared-banner ' + (isLive ? 'live' : 'local');
+  banner.innerHTML = `<span class="shared-dot"></span>${isLive ? 'Live · shared with everyone' : 'Local only · open in Claude for shared mode'}`;
+  setTimeout(() => { banner.style.opacity = '1'; }, 800);
 })();
 
 document.addEventListener('keydown', e => {
