@@ -710,62 +710,7 @@ async function saveReadIds() {
   try { await storage.set('rids:' + sessionId + ':' + currentJarId, JSON.stringify([...readIds])); } catch {}
 }
 
-// ═══════════════════════════════════════════
-//  POLLING
-// ═══════════════════════════════════════════
-function startPolling() {
-  if (pollTimer) clearInterval(pollTimer);
-  pollTimer = setInterval(async () => {
-    try {
-      // Poll letters for current jar
-      const r = await storage.get('letters:' + currentJarId, true);
-      const loaded = r ? JSON.parse(r.value) : [];
-      const existingIds = new Set(letters.map(l => l.id));
-      const loadedIds = new Set(loaded.map(l => l.id));
-      const hasChanges = loaded.length !== letters.length || loaded.some(l => !existingIds.has(l.id));
-      if (hasChanges) {
-        const prevIds = new Set(letters.map(l => l.id));
-        letters = loaded;
-        for (const l of loaded) {
-          if (!prevIds.has(l.id)) {
-            const hint = document.getElementById('emptyHint');
-            if (hint) hint.remove();
-            addSlipToJar(l, true);
-            addCardToPanel(l, true);
-          }
-        }
-        for (const id of prevIds) {
-          if (!loadedIds.has(id)) {
-            const slip = document.getElementById('slip-' + id);
-            if (slip) slip.remove();
-            document.querySelectorAll('#card-' + id).forEach(c => c.remove());
-          }
-        }
-        if (letters.length === 0) {
-          const jar = document.getElementById('jarLetters');
-          jar.innerHTML = '<div class="empty-hint" id="emptyHint">no letters yet…<br>be the first</div>';
-        }
-        updateStats();
-        updateNoUnreadHint();
-        renderReadJar();
-        renderJarDropdown();
-      }
-
-      // Poll jars list for changes from other users
-      const jr = await storage.get('jars', true);
-      const loadedJars = jr ? JSON.parse(jr.value) : [];
-      const jarChanged = loadedJars.length !== jars.length || loadedJars.some(j => !jars.find(x => x.id === j.id));
-      if (jarChanged) {
-        jars = loadedJars;
-        renderJarDropdown();
-        updateJarContext();
-        if (!jars.find(j => j.id === currentJarId) && jars.length > 0) {
-          await switchToJar(jars[0].id, false);
-        }
-      }
-    } catch {}
-  }, 3000);
-}
+// startPolling is defined below near the storage layer
 
 // ═══════════════════════════════════════════
 //  RENDER
@@ -1198,53 +1143,191 @@ function showToast(msg) {
 }
 function scrollJar() { document.querySelector('.jar-scene').scrollIntoView({behavior:'smooth',block:'center'}); }
 
-// Use window.storage if available (Claude artifact context), otherwise fall back to localStorage
-const storage = window.storage || (() => {
-  const PREFIX = 'letterjar:';
-  const sharedPrefix = 'letterjar_shared:';
-  return {
-    get: async (key, shared) => {
-      try {
-        const k = (shared ? sharedPrefix : PREFIX) + key;
-        const val = localStorage.getItem(k);
-        return val !== null ? { key, value: val, shared: !!shared } : null;
-      } catch { return null; }
-    },
-    set: async (key, value, shared) => {
-      try {
-        const k = (shared ? sharedPrefix : PREFIX) + key;
-        localStorage.setItem(k, value);
-        return { key, value, shared: !!shared };
-      } catch { return null; }
-    },
-    delete: async (key, shared) => {
-      try {
-        const k = (shared ? sharedPrefix : PREFIX) + key;
-        localStorage.removeItem(k);
-        return { key, deleted: true, shared: !!shared };
-      } catch { return null; }
-    },
-    list: async (prefix, shared) => {
-      try {
-        const p = (shared ? sharedPrefix : PREFIX) + (prefix || '');
-        const keys = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const k = localStorage.key(i);
-          if (k && k.startsWith(p)) keys.push(k.slice((shared ? sharedPrefix : PREFIX).length));
-        }
-        return { keys, prefix, shared: !!shared };
-      } catch { return { keys: [] }; }
-    }
-  };
-})();
+// ═══════════════════════════════════════════
+//  STORAGE — JSONBin.io shared backend
+//  Works on GitHub Pages and any static host.
+//  Personal keys (shared=false) use localStorage.
+//  Shared keys (shared=true) use JSONBin bins.
+// ═══════════════════════════════════════════
 
-// Show shared/local status banner
+// ┌─────────────────────────────────────────────────────────────┐
+// │  SETUP INSTRUCTIONS                                         │
+// │  1. Go to https://jsonbin.io and create a free account      │
+// │  2. Go to API Keys → Create Access Key                      │
+// │     → give it Read + Write permissions                      │
+// │  3. Paste your key below as JSONBIN_API_KEY                 │
+// └─────────────────────────────────────────────────────────────┘
+const JSONBIN_API_KEY = '$2a$10$Vm/MNAgWo1lOzmXo.I6Ys.aLp5RjHmDzgZOVAmoWzPkClPXlHu8mO';
+
+// We store everything in a single "master" bin that acts as a key-value map.
+// The bin ID is discovered on first run and cached in localStorage.
+const JSONBIN_BASE = 'https://api.jsonbin.io/v3';
+const LOCAL_PREFIX = 'lj_local:';
+const BIN_ID_KEY   = 'lj_binid';
+
+let _binId = localStorage.getItem(BIN_ID_KEY) || null;
+let _cache = null;      // in-memory mirror of bin contents
+let _dirty = false;
+let _saving = false;
+let _saveTimer = null;
+
+// Fetch the full bin data (or create the bin on first use)
+async function _loadBin() {
+  if (_cache !== null) return _cache;
+  const headers = { 'X-Master-Key': JSONBIN_API_KEY, 'X-Bin-Meta': 'false' };
+
+  if (_binId) {
+    try {
+      const res = await fetch(`${JSONBIN_BASE}/b/${_binId}/latest`, { headers });
+      if (res.ok) { _cache = await res.json(); return _cache; }
+    } catch {}
+  }
+
+  // Create a new bin
+  try {
+    const res = await fetch(`${JSONBIN_BASE}/b`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json', 'X-Bin-Name': 'letterjar', 'X-Bin-Private': 'false' },
+      body: JSON.stringify({})
+    });
+    if (res.ok) {
+      const data = await res.json();
+      _binId = data.metadata.id;
+      localStorage.setItem(BIN_ID_KEY, _binId);
+      _cache = {};
+      return _cache;
+    }
+  } catch {}
+  _cache = {};
+  return _cache;
+}
+
+// Flush the in-memory cache to JSONBin (debounced)
+function _scheduleSave() {
+  _dirty = true;
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(_flushBin, 600);
+}
+
+async function _flushBin() {
+  if (!_dirty || _saving || !_binId) return;
+  _saving = true; _dirty = false;
+  try {
+    await fetch(`${JSONBIN_BASE}/b/${_binId}`, {
+      method: 'PUT',
+      headers: { 'X-Master-Key': JSONBIN_API_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(_cache)
+    });
+  } catch { _dirty = true; }
+  _saving = false;
+  if (_dirty) _scheduleFlush();
+}
+function _scheduleFlush() { clearTimeout(_saveTimer); _saveTimer = setTimeout(_flushBin, 800); }
+
+// Invalidate cache so next read fetches fresh data from JSONBin
+function _invalidate() { _cache = null; }
+
+// Public storage API — same interface as window.storage
+const storage = window.storage || {
+  get: async (key, shared) => {
+    if (!shared) {
+      const val = localStorage.getItem(LOCAL_PREFIX + key);
+      return val !== null ? { key, value: val } : null;
+    }
+    try {
+      const bin = await _loadBin();
+      return key in bin ? { key, value: typeof bin[key] === 'string' ? bin[key] : JSON.stringify(bin[key]), shared: true } : null;
+    } catch { return null; }
+  },
+  set: async (key, value, shared) => {
+    if (!shared) {
+      localStorage.setItem(LOCAL_PREFIX + key, value);
+      return { key, value };
+    }
+    try {
+      const bin = await _loadBin();
+      bin[key] = value;
+      _scheduleSave();
+      return { key, value, shared: true };
+    } catch { return null; }
+  },
+  delete: async (key, shared) => {
+    if (!shared) { localStorage.removeItem(LOCAL_PREFIX + key); return { key, deleted: true }; }
+    try {
+      const bin = await _loadBin();
+      delete bin[key];
+      _scheduleSave();
+      return { key, deleted: true, shared: true };
+    } catch { return null; }
+  }
+};
+
+// Polling needs fresh data — invalidate cache before each poll
+const _origStartPolling = typeof startPolling === 'function' ? startPolling : null;
+
+// Patch: before each poll tick, bust the cache so we get real server data
+const _patchedGet = storage.get.bind(storage);
+storage.get = async (key, shared) => {
+  // Only invalidate for shared keys during polling (cache will be re-fetched)
+  return _patchedGet(key, shared);
+};
+
+// Override startPolling to invalidate cache each tick
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    _invalidate(); // force fresh fetch from JSONBin each tick
+    try {
+      const r = await storage.get('letters:' + currentJarId, true);
+      const loaded = r ? JSON.parse(r.value) : [];
+      const existingIds = new Set(letters.map(l => l.id));
+      const loadedIds = new Set(loaded.map(l => l.id));
+      const hasChanges = loaded.length !== letters.length || loaded.some(l => !existingIds.has(l.id));
+      if (hasChanges) {
+        const prevIds = new Set(letters.map(l => l.id));
+        letters = loaded;
+        for (const l of loaded) {
+          if (!prevIds.has(l.id)) {
+            const hint = document.getElementById('emptyHint');
+            if (hint) hint.remove();
+            addSlipToJar(l, true);
+            addCardToPanel(l, true);
+          }
+        }
+        for (const id of prevIds) {
+          if (!loadedIds.has(id)) {
+            const slip = document.getElementById('slip-' + id);
+            if (slip) slip.remove();
+            document.querySelectorAll('#card-' + id).forEach(c => c.remove());
+          }
+        }
+        if (letters.length === 0) {
+          const jar = document.getElementById('jarLetters');
+          jar.innerHTML = '<div class="empty-hint" id="emptyHint">no letters yet…<br>be the first</div>';
+        }
+        updateStats(); updateNoUnreadHint(); renderReadJar(); renderJarDropdown();
+      }
+
+      const jr = await storage.get('jars', true);
+      const loadedJars = jr ? JSON.parse(jr.value) : [];
+      const jarChanged = loadedJars.length !== jars.length || loadedJars.some(j => !jars.find(x => x.id === j.id));
+      if (jarChanged) {
+        jars = loadedJars; renderJarDropdown(); updateJarContext();
+        if (!jars.find(j => j.id === currentJarId) && jars.length > 0) await switchToJar(jars[0].id, false);
+      }
+    } catch {}
+  }, 5000);
+}
+
+// Status banner
 (function() {
   const banner = document.getElementById('sharedBanner');
-  const isLive = !!window.storage;
-  banner.className = 'shared-banner ' + (isLive ? 'live' : 'local');
-  banner.innerHTML = `<span class="shared-dot"></span>${isLive ? 'Live · shared with everyone' : 'Local only · open in Claude for shared mode'}`;
-  setTimeout(() => { banner.style.opacity = '1'; }, 800);
+  const configured = JSONBIN_API_KEY && !JSONBIN_API_KEY.includes('REPLACE');
+  banner.className = 'shared-banner ' + (configured ? 'live' : 'local');
+  banner.innerHTML = configured
+    ? '<span class="shared-dot"></span>Live · shared with everyone'
+    : '<span class="shared-dot"></span>Setup needed · add your JSONBin API key';
+  setTimeout(() => { banner.style.opacity = '1'; }, 900);
 })();
 
 document.addEventListener('keydown', e => {
