@@ -1144,89 +1144,37 @@ function showToast(msg) {
 function scrollJar() { document.querySelector('.jar-scene').scrollIntoView({behavior:'smooth',block:'center'}); }
 
 // ═══════════════════════════════════════════
-//  STORAGE — JSONBin.io shared backend
-//  One bin, shared by everyone.
+//  STORAGE — Firebase Realtime Database
+//  Shared across all users everywhere.
 //  Personal keys (shared=false) → localStorage
-//  Shared keys  (shared=true)  → JSONBin
+//  Shared keys  (shared=true)  → Firebase
 // ═══════════════════════════════════════════
-const JSONBIN_API_KEY = '$2a$10$Vm/MNAgWo1lOzmXo.I6Ys.aLp5RjHmDzgZOVAmoWzPkClPXlHu8mO';
 
-// ── IMPORTANT ──────────────────────────────────────────────────
-// After the FIRST time you load the page, a bin will be created.
-// Open the browser console, find the line:
-//   [LetterJar] Bin created: <ID>
-// Then paste that ID here so ALL users share the same bin.
-// Leave empty on first run to auto-create.
-const JSONBIN_BIN_ID = '';
+// ┌──────────────────────────────────────────────────────────────┐
+// │  PASTE YOUR FIREBASE CONFIG VALUES BELOW                     │
+// │  Get them from: Firebase Console → Project Settings →        │
+// │  "Your apps" → SDK setup → Config                            │
+// └──────────────────────────────────────────────────────────────┘
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyCmGaCnMCvHG1LKdWaUuJ6gId9BOrdmRUk",
+  authDomain:        "letters-f617f.firebaseapp.com",
+  databaseURL:       "https://letters-f617f-default-rtdb.firebaseio.com",
+  projectId:         "letters-f617f",
+  storageBucket:     "letters-f617f.firebasestorage.app",
+  messagingSenderId: "885169278039",
+  appId:             "1:885169278039:web:33c14259374faa7b1d2712"
+};
 // ───────────────────────────────────────────────────────────────
 
-const JSONBIN_BASE = 'https://api.jsonbin.io/v3';
 const LOCAL_PREFIX = 'lj_local:';
+const _fbReady = FIREBASE_CONFIG.databaseURL && !FIREBASE_CONFIG.databaseURL.includes('PASTE');
 
-let _binId = JSONBIN_BIN_ID || localStorage.getItem('lj_binid') || null;
-let _cache = null;
-let _dirty = false;
-let _saving = false;
-let _saveTimer = null;
+// Firebase REST base URL  (no SDK needed — just fetch)
+const _fbBase = _fbReady ? FIREBASE_CONFIG.databaseURL.replace(/\/$/, '') : null;
+const _fbKey  = _fbReady ? FIREBASE_CONFIG.apiKey : null;
 
-async function _loadBin() {
-  if (_cache !== null) return _cache;
-  const headers = { 'X-Master-Key': JSONBIN_API_KEY, 'X-Bin-Meta': 'false' };
-
-  if (_binId) {
-    try {
-      const res = await fetch(`${JSONBIN_BASE}/b/${_binId}/latest`, { headers });
-      if (res.ok) {
-        _cache = await res.json();
-        if (typeof _cache !== 'object' || Array.isArray(_cache)) _cache = {};
-        return _cache;
-      }
-    } catch {}
-  }
-
-  // No bin yet — create one
-  try {
-    const res = await fetch(`${JSONBIN_BASE}/b`, {
-      method: 'POST',
-      headers: { ...headers, 'Content-Type': 'application/json', 'X-Bin-Name': 'letterjar', 'X-Bin-Private': 'false' },
-      body: JSON.stringify({})
-    });
-    if (res.ok) {
-      const data = await res.json();
-      _binId = data.metadata.id;
-      localStorage.setItem('lj_binid', _binId);
-      console.log('%c[LetterJar] Bin created: ' + _binId, 'color:#c8192a;font-weight:bold');
-      console.log('%c[LetterJar] Paste that ID into JSONBIN_BIN_ID in the code so all users share it!', 'color:#e8384a');
-      _cache = {};
-      return _cache;
-    }
-  } catch {}
-  _cache = {};
-  return _cache;
-}
-
-async function _flushBin() {
-  if (!_dirty || _saving || !_binId) return;
-  _saving = true; _dirty = false;
-  try {
-    const res = await fetch(`${JSONBIN_BASE}/b/${_binId}`, {
-      method: 'PUT',
-      headers: { 'X-Master-Key': JSONBIN_API_KEY, 'Content-Type': 'application/json' },
-      body: JSON.stringify(_cache)
-    });
-    if (!res.ok) _dirty = true;
-  } catch { _dirty = true; }
-  _saving = false;
-  if (_dirty) { clearTimeout(_saveTimer); _saveTimer = setTimeout(_flushBin, 1000); }
-}
-
-function _scheduleSave() {
-  _dirty = true;
-  clearTimeout(_saveTimer);
-  _saveTimer = setTimeout(_flushBin, 500);
-}
-
-function _invalidate() { _cache = null; }
+// Encode keys: Firebase paths can't have . $ # [ ] /
+function _enc(key) { return key.replace(/[^a-zA-Z0-9_-]/g, c => '_' + c.charCodeAt(0) + '_'); }
 
 const storage = window.storage || {
   get: async (key, shared) => {
@@ -1234,28 +1182,32 @@ const storage = window.storage || {
       const val = localStorage.getItem(LOCAL_PREFIX + key);
       return val !== null ? { key, value: val } : null;
     }
+    if (!_fbReady) return null;
     try {
-      const bin = await _loadBin();
-      if (!(key in bin)) return null;
-      const v = bin[key];
-      return { key, value: typeof v === 'string' ? v : JSON.stringify(v), shared: true };
+      const res = await fetch(`${_fbBase}/lj/${_enc(key)}.json`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (data === null) return null;
+      return { key, value: typeof data === 'string' ? data : JSON.stringify(data), shared: true };
     } catch { return null; }
   },
   set: async (key, value, shared) => {
     if (!shared) { localStorage.setItem(LOCAL_PREFIX + key, value); return { key, value }; }
+    if (!_fbReady) return null;
     try {
-      const bin = await _loadBin();
-      bin[key] = value;
-      _scheduleSave();
-      return { key, value, shared: true };
+      const res = await fetch(`${_fbBase}/lj/${_enc(key)}.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(value)
+      });
+      return res.ok ? { key, value, shared: true } : null;
     } catch { return null; }
   },
   delete: async (key, shared) => {
     if (!shared) { localStorage.removeItem(LOCAL_PREFIX + key); return { key, deleted: true }; }
+    if (!_fbReady) return null;
     try {
-      const bin = await _loadBin();
-      delete bin[key];
-      _scheduleSave();
+      await fetch(`${_fbBase}/lj/${_enc(key)}.json`, { method: 'DELETE' });
       return { key, deleted: true, shared: true };
     } catch { return null; }
   }
@@ -1264,7 +1216,6 @@ const storage = window.storage || {
 function startPolling() {
   if (pollTimer) clearInterval(pollTimer);
   pollTimer = setInterval(async () => {
-    _invalidate();
     try {
       const r = await storage.get('letters:' + currentJarId, true);
       const loaded = r ? JSON.parse(r.value) : [];
@@ -1295,7 +1246,6 @@ function startPolling() {
         }
         updateStats(); updateNoUnreadHint(); renderReadJar(); renderJarDropdown();
       }
-
       const jr = await storage.get('jars', true);
       const loadedJars = jr ? JSON.parse(jr.value) : [];
       const jarChanged = loadedJars.length !== jars.length || loadedJars.some(j => !jars.find(x => x.id === j.id));
@@ -1310,11 +1260,10 @@ function startPolling() {
 // Status banner
 (function() {
   const banner = document.getElementById('sharedBanner');
-  const ready = JSONBIN_BIN_ID || localStorage.getItem('lj_binid');
-  banner.className = 'shared-banner ' + (ready ? 'live' : 'local');
-  banner.innerHTML = ready
+  banner.className = 'shared-banner ' + (_fbReady ? 'live' : 'local');
+  banner.innerHTML = _fbReady
     ? '<span class="shared-dot"></span>Live · shared with everyone'
-    : '<span class="shared-dot"></span>First run — check console for Bin ID';
+    : '<span class="shared-dot"></span>Setup needed · paste your Firebase config';
   setTimeout(() => { banner.style.opacity = '1'; }, 900);
 })();
 
