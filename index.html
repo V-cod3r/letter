@@ -18,11 +18,14 @@
   .bg-layer { position: fixed; inset: 0; background: radial-gradient(ellipse 80% 60% at 15% 10%, rgba(80,50,15,0.5) 0%, transparent 60%), radial-gradient(ellipse 60% 70% at 85% 90%, rgba(60,35,10,0.45) 0%, transparent 55%), radial-gradient(ellipse 40% 40% at 50% 50%, rgba(40,22,5,0.55) 0%, transparent 70%); pointer-events: none; z-index: 0; }
   .noise { position: fixed; inset: 0; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); pointer-events: none; z-index: 1; }
 
-  /* BOOKS */
+  /* BOOKS + QUILLS */
   .book-tl, .book-br, .book-tr { position: fixed; pointer-events: none; z-index: 2; }
-  .book-tl { top: -20px; left: -20px; width: 280px; transform: rotate(-15deg); opacity: 0.7; }
-  .book-tr { top: -10px; right: -10px; width: 220px; transform: rotate(20deg) scaleX(-1); opacity: 0.6; }
-  .book-br { bottom: -30px; right: -20px; width: 300px; transform: rotate(10deg); opacity: 0.7; }
+  .book-tl { top: -20px; left: -20px; width: 280px; transform: rotate(-15deg); opacity: 0.65; }
+  .book-tr { top: -10px; right: -10px; width: 220px; transform: rotate(20deg) scaleX(-1); opacity: 0.55; }
+  .book-br { bottom: -30px; right: -20px; width: 300px; transform: rotate(10deg); opacity: 0.65; }
+  .quill-bl { position: fixed; bottom: -10px; left: 40px; width: 220px; transform: rotate(30deg); opacity: 0.5; pointer-events: none; z-index: 2; }
+  .quill-tr2 { position: fixed; top: 80px; right: 180px; width: 160px; transform: rotate(-20deg); opacity: 0.35; pointer-events: none; z-index: 2; }
+  .quill-tl2 { position: fixed; top: 60px; left: 200px; width: 140px; transform: rotate(15deg); opacity: 0.3; pointer-events: none; z-index: 2; }
 
   /* ── HEADER ── */
   header { position: relative; z-index: 10; width: 100%; padding: 20px 60px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(160,120,60,0.3); background: rgba(24,16,6,0.6); backdrop-filter: blur(10px); gap: 20px; }
@@ -151,18 +154,6 @@
   .env-cta:hover { color: var(--rose-light); }
   .env-cta:hover .env-icon { filter: drop-shadow(0 0 14px rgba(180,140,70,0.7)); transform: translateY(-3px); }
   .env-icon { width: 58px; height: 42px; transition: filter 0.3s, transform 0.3s; }
-
-  /* READ JAR */
-  .read-jar-section { margin-top: 32px; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; opacity: 0; transform: translateY(10px); transition: opacity 0.5s ease, transform 0.5s ease; pointer-events: none; }
-  .read-jar-section.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
-  .read-jar-label { font-style: italic; font-size: 0.72rem; letter-spacing: 0.12em; color: rgba(245,235,210,0.3); display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
-  .read-jar-label::before, .read-jar-label::after { content: ''; flex: 1; height: 1px; background: rgba(160,120,60,0.28); }
-  .read-jar-scene { position: relative; width: 140px; height: 200px; cursor: pointer; }
-  .read-jar-scene:hover .rj-svg { filter: drop-shadow(0 10px 25px rgba(0,0,0,0.7)) drop-shadow(0 0 20px rgba(80,50,15,0.3)); }
-  .rj-svg { width: 100%; height: 100%; transition: filter 0.3s; filter: drop-shadow(0 8px 20px rgba(0,0,0,0.7)) drop-shadow(0 0 15px rgba(40,20,5,0.2)); }
-  .rj-letters { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); width: 84px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: center; gap: 3px; padding: 3px; overflow: hidden; max-height: 135px; }
-  .rj-slip { background: var(--paper); border-radius: 2px; padding: 3px 6px; font-family: 'Caveat', cursive; font-size: 9px; color: var(--ink); transform: rotate(calc(var(--r)*1deg)); box-shadow: 1px 2px 4px rgba(0,0,0,0.4); max-width: 60px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; border-left: 2px solid var(--crimson); opacity: 0.75; animation: none; }
-  .read-badge { position: absolute; top: 4px; right: -12px; background: rgba(60,60,60,0.9); border: 1px solid rgba(180,180,180,0.2); color: rgba(245,232,224,0.6); font-family: 'Playfair Display', serif; font-size: 11px; font-weight: 700; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 
   /* RIGHT */
   .hero-right { display: flex; flex-direction: column; gap: 18px; animation: fadeRight 1.2s ease 0.15s both; }
@@ -363,6 +354,223 @@
   </g>
 </svg>
 
+
+<!-- QUILL BL — large, bottom left -->
+<svg class="quill-bl" viewBox="0 0 200 480" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(100,230)">
+  <path d="M 0,-140.0 L -0.0,-140.0 L -10.7,-124.4 L -21.3,-108.9 L -32.0,-93.3 L -42.5,-77.8 L -53.1,-62.2 L -63.6,-46.7 L -71.6,-31.1 L -67.3,-15.6 L -62.7,0.0 L -57.9,15.6 L -52.9,31.1 L -47.5,46.7 L -41.8,62.2 L -35.7,77.8 L -29.2,93.3 L -21.9,108.9 L -13.4,124.4 L -0.0,140.0 L 0,140.0 L -0.0,140.0 L 4.5,124.4 L 7.7,108.9 L 10.6,93.3 L 13.3,77.8 L 15.9,62.2 L 18.4,46.7 L 20.9,31.1 L 23.4,15.6 L 26.0,0.0 L 28.5,-15.6 L 31.1,-31.1 L 33.7,-46.7 L 29.7,-62.2 L 23.7,-77.8 L 17.7,-93.3 L 11.8,-108.9 L 5.9,-124.4 L 0.0,-140.0 Z" fill="#c8a050" fill-opacity="0.14" stroke="#c8a050" stroke-opacity="0.6" stroke-width="0.9" stroke-linejoin="round"/>
+  <path d="M 0,-140.0 Q -5.0,0.0 1,140.0" fill="none" stroke="#c8a050" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="-0.2" y1="-131.6" x2="-4.5" y2="-127.4" stroke="#c8a050" stroke-width="0.4" opacity="0.32" stroke-linecap="round"/>
+  <line x1="-0.2" y1="-131.6" x2="2.5" y2="-129.0" stroke="#c8a050" stroke-width="0.4" opacity="0.26" stroke-linecap="round"/>
+  <line x1="-0.5" y1="-122.5" x2="-9.5" y2="-114.0" stroke="#c8a050" stroke-width="0.4" opacity="0.35" stroke-linecap="round"/>
+  <line x1="-0.5" y1="-122.5" x2="5.2" y2="-117.2" stroke="#c8a050" stroke-width="0.4" opacity="0.28" stroke-linecap="round"/>
+  <line x1="-0.7" y1="-113.4" x2="-14.7" y2="-100.8" stroke="#c8a050" stroke-width="0.4" opacity="0.37" stroke-linecap="round"/>
+  <line x1="-0.7" y1="-113.4" x2="8.1" y2="-105.5" stroke="#c8a050" stroke-width="0.4" opacity="0.29" stroke-linecap="round"/>
+  <line x1="-1.0" y1="-104.4" x2="-20.0" y2="-87.7" stroke="#c8a050" stroke-width="0.4" opacity="0.39" stroke-linecap="round"/>
+  <line x1="-1.0" y1="-104.4" x2="11.0" y2="-93.9" stroke="#c8a050" stroke-width="0.4" opacity="0.31" stroke-linecap="round"/>
+  <line x1="-1.2" y1="-95.3" x2="-25.5" y2="-74.8" stroke="#c8a050" stroke-width="0.4" opacity="0.41" stroke-linecap="round"/>
+  <line x1="-1.2" y1="-95.3" x2="14.1" y2="-82.4" stroke="#c8a050" stroke-width="0.4" opacity="0.33" stroke-linecap="round"/>
+  <line x1="-1.4" y1="-86.2" x2="-31.0" y2="-62.1" stroke="#c8a050" stroke-width="0.4" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-1.4" y1="-86.2" x2="17.2" y2="-71.0" stroke="#c8a050" stroke-width="0.4" opacity="0.34" stroke-linecap="round"/>
+  <line x1="-1.6" y1="-77.1" x2="-36.7" y2="-49.5" stroke="#c8a050" stroke-width="0.4" opacity="0.45" stroke-linecap="round"/>
+  <line x1="-1.6" y1="-77.1" x2="20.4" y2="-59.7" stroke="#c8a050" stroke-width="0.4" opacity="0.36" stroke-linecap="round"/>
+  <line x1="-1.8" y1="-68.1" x2="-42.5" y2="-37.1" stroke="#c8a050" stroke-width="0.4" opacity="0.47" stroke-linecap="round"/>
+  <line x1="-1.8" y1="-68.1" x2="23.8" y2="-48.6" stroke="#c8a050" stroke-width="0.4" opacity="0.37" stroke-linecap="round"/>
+  <line x1="-2.0" y1="-59.0" x2="-48.3" y2="-24.9" stroke="#c8a050" stroke-width="0.4" opacity="0.48" stroke-linecap="round"/>
+  <line x1="-2.0" y1="-59.0" x2="27.2" y2="-37.6" stroke="#c8a050" stroke-width="0.4" opacity="0.39" stroke-linecap="round"/>
+  <line x1="-2.1" y1="-49.9" x2="-54.3" y2="-12.9" stroke="#c8a050" stroke-width="0.55" opacity="0.50" stroke-linecap="round"/>
+  <line x1="-2.1" y1="-49.9" x2="30.5" y2="-26.8" stroke="#c8a050" stroke-width="0.55" opacity="0.40" stroke-linecap="round"/>
+  <line x1="-2.2" y1="-40.8" x2="-60.4" y2="-1.1" stroke="#c8a050" stroke-width="0.55" opacity="0.51" stroke-linecap="round"/>
+  <line x1="-2.2" y1="-40.8" x2="29.5" y2="-19.1" stroke="#c8a050" stroke-width="0.55" opacity="0.41" stroke-linecap="round"/>
+  <line x1="-2.3" y1="-31.8" x2="-65.0" y2="9.5" stroke="#c8a050" stroke-width="0.55" opacity="0.52" stroke-linecap="round"/>
+  <line x1="-2.3" y1="-31.8" x2="28.4" y2="-11.5" stroke="#c8a050" stroke-width="0.55" opacity="0.42" stroke-linecap="round"/>
+  <line x1="-2.4" y1="-22.7" x2="-63.4" y2="16.1" stroke="#c8a050" stroke-width="0.55" opacity="0.53" stroke-linecap="round"/>
+  <line x1="-2.4" y1="-22.7" x2="27.4" y2="-3.8" stroke="#c8a050" stroke-width="0.55" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-2.5" y1="-13.6" x2="-61.7" y2="22.6" stroke="#c8a050" stroke-width="0.55" opacity="0.54" stroke-linecap="round"/>
+  <line x1="-2.5" y1="-13.6" x2="26.3" y2="4.0" stroke="#c8a050" stroke-width="0.55" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-2.5" y1="-4.5" x2="-59.8" y2="29.2" stroke="#c8a050" stroke-width="0.55" opacity="0.55" stroke-linecap="round"/>
+  <line x1="-2.5" y1="-4.5" x2="25.2" y2="11.8" stroke="#c8a050" stroke-width="0.55" opacity="0.44" stroke-linecap="round"/>
+  <line x1="-2.5" y1="4.5" x2="-57.8" y2="35.8" stroke="#c8a050" stroke-width="0.55" opacity="0.55" stroke-linecap="round"/>
+  <line x1="-2.5" y1="4.5" x2="24.0" y2="19.6" stroke="#c8a050" stroke-width="0.55" opacity="0.44" stroke-linecap="round"/>
+  <line x1="-2.5" y1="13.6" x2="-55.7" y2="42.5" stroke="#c8a050" stroke-width="0.55" opacity="0.54" stroke-linecap="round"/>
+  <line x1="-2.5" y1="13.6" x2="22.9" y2="27.4" stroke="#c8a050" stroke-width="0.55" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-2.4" y1="22.7" x2="-53.4" y2="49.3" stroke="#9a7030" stroke-width="0.55" opacity="0.53" stroke-linecap="round"/>
+  <line x1="-2.4" y1="22.7" x2="21.7" y2="35.3" stroke="#9a7030" stroke-width="0.55" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-2.3" y1="31.8" x2="-50.9" y2="56.1" stroke="#9a7030" stroke-width="0.55" opacity="0.52" stroke-linecap="round"/>
+  <line x1="-2.3" y1="31.8" x2="20.4" y2="43.2" stroke="#9a7030" stroke-width="0.55" opacity="0.42" stroke-linecap="round"/>
+  <line x1="-2.2" y1="40.8" x2="-48.3" y2="62.9" stroke="#9a7030" stroke-width="0.55" opacity="0.51" stroke-linecap="round"/>
+  <line x1="-2.2" y1="40.8" x2="19.2" y2="51.1" stroke="#9a7030" stroke-width="0.55" opacity="0.41" stroke-linecap="round"/>
+  <line x1="-2.1" y1="49.9" x2="-45.5" y2="69.8" stroke="#9a7030" stroke-width="0.55" opacity="0.50" stroke-linecap="round"/>
+  <line x1="-2.1" y1="49.9" x2="17.9" y2="59.1" stroke="#9a7030" stroke-width="0.55" opacity="0.40" stroke-linecap="round"/>
+  <line x1="-2.0" y1="59.0" x2="-42.6" y2="76.8" stroke="#9a7030" stroke-width="0.55" opacity="0.48" stroke-linecap="round"/>
+  <line x1="-2.0" y1="59.0" x2="16.5" y2="67.1" stroke="#9a7030" stroke-width="0.55" opacity="0.39" stroke-linecap="round"/>
+  <line x1="-1.8" y1="68.1" x2="-39.4" y2="83.8" stroke="#9a7030" stroke-width="0.55" opacity="0.47" stroke-linecap="round"/>
+  <line x1="-1.8" y1="68.1" x2="15.1" y2="75.2" stroke="#9a7030" stroke-width="0.55" opacity="0.37" stroke-linecap="round"/>
+  <line x1="-1.6" y1="77.1" x2="-36.1" y2="90.9" stroke="#9a7030" stroke-width="0.55" opacity="0.45" stroke-linecap="round"/>
+  <line x1="-1.6" y1="77.1" x2="13.7" y2="83.3" stroke="#9a7030" stroke-width="0.55" opacity="0.36" stroke-linecap="round"/>
+  <line x1="-1.4" y1="86.2" x2="-32.5" y2="98.0" stroke="#9a7030" stroke-width="0.4" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-1.4" y1="86.2" x2="12.2" y2="91.4" stroke="#9a7030" stroke-width="0.4" opacity="0.34" stroke-linecap="round"/>
+  <line x1="-1.2" y1="95.3" x2="-28.7" y2="105.2" stroke="#9a7030" stroke-width="0.4" opacity="0.41" stroke-linecap="round"/>
+  <line x1="-1.2" y1="95.3" x2="10.6" y2="99.5" stroke="#9a7030" stroke-width="0.4" opacity="0.33" stroke-linecap="round"/>
+  <line x1="-1.0" y1="104.4" x2="-24.6" y2="112.4" stroke="#9a7030" stroke-width="0.4" opacity="0.39" stroke-linecap="round"/>
+  <line x1="-1.0" y1="104.4" x2="8.9" y2="107.8" stroke="#9a7030" stroke-width="0.4" opacity="0.31" stroke-linecap="round"/>
+  <line x1="-0.7" y1="113.4" x2="-20.1" y2="119.7" stroke="#9a7030" stroke-width="0.4" opacity="0.37" stroke-linecap="round"/>
+  <line x1="-0.7" y1="113.4" x2="7.1" y2="116.0" stroke="#9a7030" stroke-width="0.4" opacity="0.29" stroke-linecap="round"/>
+  <line x1="-0.5" y1="122.5" x2="-15.0" y2="126.9" stroke="#9a7030" stroke-width="0.4" opacity="0.35" stroke-linecap="round"/>
+  <line x1="-0.5" y1="122.5" x2="5.2" y2="124.2" stroke="#9a7030" stroke-width="0.4" opacity="0.28" stroke-linecap="round"/>
+  <line x1="-0.2" y1="131.6" x2="-9.0" y2="134.1" stroke="#9a7030" stroke-width="0.4" opacity="0.32" stroke-linecap="round"/>
+  <line x1="-0.2" y1="131.6" x2="2.9" y2="132.5" stroke="#9a7030" stroke-width="0.4" opacity="0.26" stroke-linecap="round"/>
+  <path d="M 0,140.0 Q 1,172.5 1,205.0" fill="none" stroke="#c8a050" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M 0,140.0 Q 0,172.5 0,205.0" fill="none" stroke="rgba(20,10,0,0.28)" stroke-width="0.7"/>
+  <path d="M 1,205.0 Q 2.5,215.0 1.5,223.0 Q 0,228.0 -1.5,223.0 Q -2,215.0 0,205.0 Z" fill="#9a7030" fill-opacity="0.92"/>
+  <line x1="0" y1="211.0" x2="0" y2="228.0" stroke="rgba(15,5,0,0.4)" stroke-width="0.5"/>
+  </g>
+</svg>
+
+<!-- QUILL TR2 — medium, upper right -->
+<svg class="quill-tr2" viewBox="0 0 160 380" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(80,185)">
+  <path d="M 0,-108.0 L -0.0,-108.0 L -8.3,-96.0 L -16.6,-84.0 L -24.9,-72.0 L -33.2,-60.0 L -41.4,-48.0 L -49.5,-36.0 L -55.8,-24.0 L -52.5,-12.0 L -49.0,0.0 L -45.2,12.0 L -41.3,24.0 L -37.1,36.0 L -32.7,48.0 L -27.9,60.0 L -22.8,72.0 L -17.1,84.0 L -10.4,96.0 L -0.0,108.0 L 0,108.0 L -0.0,108.0 L 3.4,96.0 L 5.7,84.0 L 7.9,72.0 L 9.9,60.0 L 11.8,48.0 L 13.7,36.0 L 15.6,24.0 L 17.5,12.0 L 19.5,0.0 L 21.4,-12.0 L 23.4,-24.0 L 25.5,-36.0 L 22.5,-48.0 L 17.9,-60.0 L 13.4,-72.0 L 8.9,-84.0 L 4.4,-96.0 L 0.0,-108.0 Z" fill="#c0985a" fill-opacity="0.14" stroke="#c0985a" stroke-opacity="0.6" stroke-width="0.9" stroke-linejoin="round"/>
+  <path d="M 0,-108.0 Q -5.0,0.0 1,108.0" fill="none" stroke="#c0985a" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="-0.2" y1="-101.5" x2="-3.5" y2="-98.3" stroke="#c0985a" stroke-width="0.4" opacity="0.32" stroke-linecap="round"/>
+  <line x1="-0.2" y1="-101.5" x2="1.8" y2="-99.5" stroke="#c0985a" stroke-width="0.4" opacity="0.26" stroke-linecap="round"/>
+  <line x1="-0.5" y1="-94.5" x2="-7.5" y2="-88.0" stroke="#c0985a" stroke-width="0.4" opacity="0.35" stroke-linecap="round"/>
+  <line x1="-0.5" y1="-94.5" x2="3.9" y2="-90.4" stroke="#c0985a" stroke-width="0.4" opacity="0.28" stroke-linecap="round"/>
+  <line x1="-0.7" y1="-87.5" x2="-11.5" y2="-77.7" stroke="#c0985a" stroke-width="0.4" opacity="0.37" stroke-linecap="round"/>
+  <line x1="-0.7" y1="-87.5" x2="6.1" y2="-81.4" stroke="#c0985a" stroke-width="0.4" opacity="0.29" stroke-linecap="round"/>
+  <line x1="-1.0" y1="-80.5" x2="-15.7" y2="-67.7" stroke="#c0985a" stroke-width="0.4" opacity="0.39" stroke-linecap="round"/>
+  <line x1="-1.0" y1="-80.5" x2="8.3" y2="-72.4" stroke="#c0985a" stroke-width="0.4" opacity="0.31" stroke-linecap="round"/>
+  <line x1="-1.2" y1="-73.5" x2="-19.9" y2="-57.7" stroke="#c0985a" stroke-width="0.4" opacity="0.41" stroke-linecap="round"/>
+  <line x1="-1.2" y1="-73.5" x2="10.6" y2="-63.6" stroke="#c0985a" stroke-width="0.4" opacity="0.33" stroke-linecap="round"/>
+  <line x1="-1.4" y1="-66.5" x2="-24.2" y2="-47.9" stroke="#c0985a" stroke-width="0.4" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-1.4" y1="-66.5" x2="12.9" y2="-54.8" stroke="#c0985a" stroke-width="0.4" opacity="0.34" stroke-linecap="round"/>
+  <line x1="-1.6" y1="-59.5" x2="-28.7" y2="-38.2" stroke="#c0985a" stroke-width="0.4" opacity="0.45" stroke-linecap="round"/>
+  <line x1="-1.6" y1="-59.5" x2="15.4" y2="-46.1" stroke="#c0985a" stroke-width="0.4" opacity="0.36" stroke-linecap="round"/>
+  <line x1="-1.8" y1="-52.5" x2="-33.2" y2="-28.6" stroke="#c0985a" stroke-width="0.4" opacity="0.47" stroke-linecap="round"/>
+  <line x1="-1.8" y1="-52.5" x2="17.9" y2="-37.5" stroke="#c0985a" stroke-width="0.4" opacity="0.37" stroke-linecap="round"/>
+  <line x1="-2.0" y1="-45.5" x2="-37.7" y2="-19.2" stroke="#c0985a" stroke-width="0.4" opacity="0.48" stroke-linecap="round"/>
+  <line x1="-2.0" y1="-45.5" x2="20.5" y2="-29.0" stroke="#c0985a" stroke-width="0.4" opacity="0.39" stroke-linecap="round"/>
+  <line x1="-2.1" y1="-38.5" x2="-42.4" y2="-9.9" stroke="#c0985a" stroke-width="0.55" opacity="0.50" stroke-linecap="round"/>
+  <line x1="-2.1" y1="-38.5" x2="23.0" y2="-20.7" stroke="#c0985a" stroke-width="0.55" opacity="0.40" stroke-linecap="round"/>
+  <line x1="-2.2" y1="-31.5" x2="-47.1" y2="-0.8" stroke="#c0985a" stroke-width="0.55" opacity="0.51" stroke-linecap="round"/>
+  <line x1="-2.2" y1="-31.5" x2="22.2" y2="-14.8" stroke="#c0985a" stroke-width="0.55" opacity="0.41" stroke-linecap="round"/>
+  <line x1="-2.3" y1="-24.5" x2="-50.7" y2="7.4" stroke="#c0985a" stroke-width="0.55" opacity="0.52" stroke-linecap="round"/>
+  <line x1="-2.3" y1="-24.5" x2="21.4" y2="-8.8" stroke="#c0985a" stroke-width="0.55" opacity="0.42" stroke-linecap="round"/>
+  <line x1="-2.4" y1="-17.5" x2="-49.5" y2="12.4" stroke="#c0985a" stroke-width="0.55" opacity="0.53" stroke-linecap="round"/>
+  <line x1="-2.4" y1="-17.5" x2="20.6" y2="-2.9" stroke="#c0985a" stroke-width="0.55" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-2.5" y1="-10.5" x2="-48.1" y2="17.4" stroke="#c0985a" stroke-width="0.55" opacity="0.54" stroke-linecap="round"/>
+  <line x1="-2.5" y1="-10.5" x2="19.7" y2="3.1" stroke="#c0985a" stroke-width="0.55" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-2.5" y1="-3.5" x2="-46.7" y2="22.5" stroke="#c0985a" stroke-width="0.55" opacity="0.55" stroke-linecap="round"/>
+  <line x1="-2.5" y1="-3.5" x2="18.9" y2="9.1" stroke="#c0985a" stroke-width="0.55" opacity="0.44" stroke-linecap="round"/>
+  <line x1="-2.5" y1="3.5" x2="-45.2" y2="27.7" stroke="#c0985a" stroke-width="0.55" opacity="0.55" stroke-linecap="round"/>
+  <line x1="-2.5" y1="3.5" x2="18.0" y2="15.1" stroke="#c0985a" stroke-width="0.55" opacity="0.44" stroke-linecap="round"/>
+  <line x1="-2.5" y1="10.5" x2="-43.5" y2="32.8" stroke="#c0985a" stroke-width="0.55" opacity="0.54" stroke-linecap="round"/>
+  <line x1="-2.5" y1="10.5" x2="17.1" y2="21.1" stroke="#c0985a" stroke-width="0.55" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-2.4" y1="17.5" x2="-41.7" y2="38.0" stroke="#906828" stroke-width="0.55" opacity="0.53" stroke-linecap="round"/>
+  <line x1="-2.4" y1="17.5" x2="16.2" y2="27.2" stroke="#906828" stroke-width="0.55" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-2.3" y1="24.5" x2="-39.8" y2="43.3" stroke="#906828" stroke-width="0.55" opacity="0.52" stroke-linecap="round"/>
+  <line x1="-2.3" y1="24.5" x2="15.2" y2="33.3" stroke="#906828" stroke-width="0.55" opacity="0.42" stroke-linecap="round"/>
+  <line x1="-2.2" y1="31.5" x2="-37.8" y2="48.5" stroke="#906828" stroke-width="0.55" opacity="0.51" stroke-linecap="round"/>
+  <line x1="-2.2" y1="31.5" x2="14.3" y2="39.4" stroke="#906828" stroke-width="0.55" opacity="0.41" stroke-linecap="round"/>
+  <line x1="-2.1" y1="38.5" x2="-35.6" y2="53.9" stroke="#906828" stroke-width="0.55" opacity="0.50" stroke-linecap="round"/>
+  <line x1="-2.1" y1="38.5" x2="13.3" y2="45.6" stroke="#906828" stroke-width="0.55" opacity="0.40" stroke-linecap="round"/>
+  <line x1="-2.0" y1="45.5" x2="-33.3" y2="59.2" stroke="#906828" stroke-width="0.55" opacity="0.48" stroke-linecap="round"/>
+  <line x1="-2.0" y1="45.5" x2="12.3" y2="51.8" stroke="#906828" stroke-width="0.55" opacity="0.39" stroke-linecap="round"/>
+  <line x1="-1.8" y1="52.5" x2="-30.8" y2="64.7" stroke="#906828" stroke-width="0.55" opacity="0.47" stroke-linecap="round"/>
+  <line x1="-1.8" y1="52.5" x2="11.3" y2="58.0" stroke="#906828" stroke-width="0.55" opacity="0.37" stroke-linecap="round"/>
+  <line x1="-1.6" y1="59.5" x2="-28.2" y2="70.1" stroke="#906828" stroke-width="0.55" opacity="0.45" stroke-linecap="round"/>
+  <line x1="-1.6" y1="59.5" x2="10.2" y2="64.2" stroke="#906828" stroke-width="0.55" opacity="0.36" stroke-linecap="round"/>
+  <line x1="-1.4" y1="66.5" x2="-25.4" y2="75.6" stroke="#906828" stroke-width="0.4" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-1.4" y1="66.5" x2="9.1" y2="70.5" stroke="#906828" stroke-width="0.4" opacity="0.34" stroke-linecap="round"/>
+  <line x1="-1.2" y1="73.5" x2="-22.4" y2="81.2" stroke="#906828" stroke-width="0.4" opacity="0.41" stroke-linecap="round"/>
+  <line x1="-1.2" y1="73.5" x2="7.9" y2="76.8" stroke="#906828" stroke-width="0.4" opacity="0.33" stroke-linecap="round"/>
+  <line x1="-1.0" y1="80.5" x2="-19.2" y2="86.7" stroke="#906828" stroke-width="0.4" opacity="0.39" stroke-linecap="round"/>
+  <line x1="-1.0" y1="80.5" x2="6.7" y2="83.1" stroke="#906828" stroke-width="0.4" opacity="0.31" stroke-linecap="round"/>
+  <line x1="-0.7" y1="87.5" x2="-15.6" y2="92.3" stroke="#906828" stroke-width="0.4" opacity="0.37" stroke-linecap="round"/>
+  <line x1="-0.7" y1="87.5" x2="5.3" y2="89.5" stroke="#906828" stroke-width="0.4" opacity="0.29" stroke-linecap="round"/>
+  <line x1="-0.5" y1="94.5" x2="-11.7" y2="97.9" stroke="#906828" stroke-width="0.4" opacity="0.35" stroke-linecap="round"/>
+  <line x1="-0.5" y1="94.5" x2="3.9" y2="95.8" stroke="#906828" stroke-width="0.4" opacity="0.28" stroke-linecap="round"/>
+  <line x1="-0.2" y1="101.5" x2="-7.0" y2="103.4" stroke="#906828" stroke-width="0.4" opacity="0.32" stroke-linecap="round"/>
+  <line x1="-0.2" y1="101.5" x2="2.2" y2="102.2" stroke="#906828" stroke-width="0.4" opacity="0.26" stroke-linecap="round"/>
+  <path d="M 0,108.0 Q 1,134.0 1,160.0" fill="none" stroke="#c0985a" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M 0,108.0 Q 0,134.0 0,160.0" fill="none" stroke="rgba(20,10,0,0.28)" stroke-width="0.7"/>
+  <path d="M 1,160.0 Q 2.5,170.0 1.5,178.0 Q 0,183.0 -1.5,178.0 Q -2,170.0 0,160.0 Z" fill="#906828" fill-opacity="0.92"/>
+  <line x1="0" y1="166.0" x2="0" y2="183.0" stroke="rgba(15,5,0,0.4)" stroke-width="0.5"/>
+  </g>
+</svg>
+
+<!-- QUILL TL2 — small, upper left -->
+<svg class="quill-tl2" viewBox="0 0 120 300" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(60,148)">
+  <path d="M 0,-85.0 L -0.0,-85.0 L -6.6,-75.6 L -13.3,-66.1 L -19.9,-56.7 L -26.5,-47.2 L -33.0,-37.8 L -39.4,-28.3 L -44.4,-18.9 L -41.8,-9.4 L -39.1,0.0 L -36.1,9.4 L -33.0,18.9 L -29.7,28.3 L -26.1,37.8 L -22.3,47.2 L -18.2,56.7 L -13.6,66.1 L -8.3,75.6 L -0.0,85.0 L 0,85.0 L -0.0,85.0 L 2.5,75.6 L 4.3,66.1 L 5.9,56.7 L 7.4,47.2 L 8.9,37.8 L 10.3,28.3 L 11.8,18.9 L 13.3,9.4 L 14.8,0.0 L 16.3,-9.4 L 17.9,-18.9 L 19.6,-28.3 L 17.3,-37.8 L 13.7,-47.2 L 10.3,-56.7 L 6.8,-66.1 L 3.4,-75.6 L 0.0,-85.0 Z" fill="#b89050" fill-opacity="0.14" stroke="#b89050" stroke-opacity="0.6" stroke-width="0.9" stroke-linejoin="round"/>
+  <path d="M 0,-85.0 Q -5.0,0.0 1,85.0" fill="none" stroke="#b89050" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="-0.2" y1="-79.9" x2="-2.8" y2="-77.4" stroke="#b89050" stroke-width="0.4" opacity="0.32" stroke-linecap="round"/>
+  <line x1="-0.2" y1="-79.9" x2="1.4" y2="-78.3" stroke="#b89050" stroke-width="0.4" opacity="0.26" stroke-linecap="round"/>
+  <line x1="-0.5" y1="-74.4" x2="-6.0" y2="-69.2" stroke="#b89050" stroke-width="0.4" opacity="0.35" stroke-linecap="round"/>
+  <line x1="-0.5" y1="-74.4" x2="3.0" y2="-71.1" stroke="#b89050" stroke-width="0.4" opacity="0.28" stroke-linecap="round"/>
+  <line x1="-0.7" y1="-68.9" x2="-9.2" y2="-61.2" stroke="#b89050" stroke-width="0.4" opacity="0.37" stroke-linecap="round"/>
+  <line x1="-0.7" y1="-68.9" x2="4.6" y2="-64.0" stroke="#b89050" stroke-width="0.4" opacity="0.29" stroke-linecap="round"/>
+  <line x1="-1.0" y1="-63.4" x2="-12.5" y2="-53.2" stroke="#b89050" stroke-width="0.4" opacity="0.39" stroke-linecap="round"/>
+  <line x1="-1.0" y1="-63.4" x2="6.3" y2="-57.0" stroke="#b89050" stroke-width="0.4" opacity="0.31" stroke-linecap="round"/>
+  <line x1="-1.2" y1="-57.9" x2="-15.9" y2="-45.4" stroke="#b89050" stroke-width="0.4" opacity="0.41" stroke-linecap="round"/>
+  <line x1="-1.2" y1="-57.9" x2="8.1" y2="-50.0" stroke="#b89050" stroke-width="0.4" opacity="0.33" stroke-linecap="round"/>
+  <line x1="-1.4" y1="-52.3" x2="-19.4" y2="-37.7" stroke="#b89050" stroke-width="0.4" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-1.4" y1="-52.3" x2="9.9" y2="-43.1" stroke="#b89050" stroke-width="0.4" opacity="0.34" stroke-linecap="round"/>
+  <line x1="-1.6" y1="-46.8" x2="-22.9" y2="-30.0" stroke="#b89050" stroke-width="0.4" opacity="0.45" stroke-linecap="round"/>
+  <line x1="-1.6" y1="-46.8" x2="11.8" y2="-36.3" stroke="#b89050" stroke-width="0.4" opacity="0.36" stroke-linecap="round"/>
+  <line x1="-1.8" y1="-41.3" x2="-26.5" y2="-22.5" stroke="#b89050" stroke-width="0.4" opacity="0.47" stroke-linecap="round"/>
+  <line x1="-1.8" y1="-41.3" x2="13.7" y2="-29.5" stroke="#b89050" stroke-width="0.4" opacity="0.37" stroke-linecap="round"/>
+  <line x1="-2.0" y1="-35.8" x2="-30.1" y2="-15.1" stroke="#b89050" stroke-width="0.4" opacity="0.48" stroke-linecap="round"/>
+  <line x1="-2.0" y1="-35.8" x2="15.7" y2="-22.8" stroke="#b89050" stroke-width="0.4" opacity="0.39" stroke-linecap="round"/>
+  <line x1="-2.1" y1="-30.3" x2="-33.8" y2="-7.8" stroke="#b89050" stroke-width="0.55" opacity="0.50" stroke-linecap="round"/>
+  <line x1="-2.1" y1="-30.3" x2="17.7" y2="-16.3" stroke="#b89050" stroke-width="0.55" opacity="0.40" stroke-linecap="round"/>
+  <line x1="-2.2" y1="-24.8" x2="-37.5" y2="-0.6" stroke="#b89050" stroke-width="0.55" opacity="0.51" stroke-linecap="round"/>
+  <line x1="-2.2" y1="-24.8" x2="17.0" y2="-11.6" stroke="#b89050" stroke-width="0.55" opacity="0.41" stroke-linecap="round"/>
+  <line x1="-2.3" y1="-19.3" x2="-40.4" y2="5.8" stroke="#b89050" stroke-width="0.55" opacity="0.52" stroke-linecap="round"/>
+  <line x1="-2.3" y1="-19.3" x2="16.3" y2="-7.0" stroke="#b89050" stroke-width="0.55" opacity="0.42" stroke-linecap="round"/>
+  <line x1="-2.4" y1="-13.8" x2="-39.4" y2="9.7" stroke="#b89050" stroke-width="0.55" opacity="0.53" stroke-linecap="round"/>
+  <line x1="-2.4" y1="-13.8" x2="15.7" y2="-2.3" stroke="#b89050" stroke-width="0.55" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-2.5" y1="-8.3" x2="-38.4" y2="13.7" stroke="#b89050" stroke-width="0.55" opacity="0.54" stroke-linecap="round"/>
+  <line x1="-2.5" y1="-8.3" x2="15.0" y2="2.4" stroke="#b89050" stroke-width="0.55" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-2.5" y1="-2.8" x2="-37.3" y2="17.7" stroke="#b89050" stroke-width="0.55" opacity="0.55" stroke-linecap="round"/>
+  <line x1="-2.5" y1="-2.8" x2="14.3" y2="7.1" stroke="#b89050" stroke-width="0.55" opacity="0.44" stroke-linecap="round"/>
+  <line x1="-2.5" y1="2.8" x2="-36.1" y2="21.8" stroke="#b89050" stroke-width="0.55" opacity="0.55" stroke-linecap="round"/>
+  <line x1="-2.5" y1="2.8" x2="13.6" y2="11.9" stroke="#b89050" stroke-width="0.55" opacity="0.44" stroke-linecap="round"/>
+  <line x1="-2.5" y1="8.3" x2="-34.8" y2="25.8" stroke="#b89050" stroke-width="0.55" opacity="0.54" stroke-linecap="round"/>
+  <line x1="-2.5" y1="8.3" x2="12.9" y2="16.6" stroke="#b89050" stroke-width="0.55" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-2.4" y1="13.8" x2="-33.3" y2="29.9" stroke="#887020" stroke-width="0.55" opacity="0.53" stroke-linecap="round"/>
+  <line x1="-2.4" y1="13.8" x2="12.2" y2="21.4" stroke="#887020" stroke-width="0.55" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-2.3" y1="19.3" x2="-31.8" y2="34.0" stroke="#887020" stroke-width="0.55" opacity="0.52" stroke-linecap="round"/>
+  <line x1="-2.3" y1="19.3" x2="11.5" y2="26.2" stroke="#887020" stroke-width="0.55" opacity="0.42" stroke-linecap="round"/>
+  <line x1="-2.2" y1="24.8" x2="-30.2" y2="38.2" stroke="#887020" stroke-width="0.55" opacity="0.51" stroke-linecap="round"/>
+  <line x1="-2.2" y1="24.8" x2="10.8" y2="31.0" stroke="#887020" stroke-width="0.55" opacity="0.41" stroke-linecap="round"/>
+  <line x1="-2.1" y1="30.3" x2="-28.5" y2="42.4" stroke="#887020" stroke-width="0.55" opacity="0.50" stroke-linecap="round"/>
+  <line x1="-2.1" y1="30.3" x2="10.0" y2="35.9" stroke="#887020" stroke-width="0.55" opacity="0.40" stroke-linecap="round"/>
+  <line x1="-2.0" y1="35.8" x2="-26.6" y2="46.6" stroke="#887020" stroke-width="0.55" opacity="0.48" stroke-linecap="round"/>
+  <line x1="-2.0" y1="35.8" x2="9.3" y2="40.7" stroke="#887020" stroke-width="0.55" opacity="0.39" stroke-linecap="round"/>
+  <line x1="-1.8" y1="41.3" x2="-24.7" y2="50.9" stroke="#887020" stroke-width="0.55" opacity="0.47" stroke-linecap="round"/>
+  <line x1="-1.8" y1="41.3" x2="8.5" y2="45.6" stroke="#887020" stroke-width="0.55" opacity="0.37" stroke-linecap="round"/>
+  <line x1="-1.6" y1="46.8" x2="-22.6" y2="55.2" stroke="#887020" stroke-width="0.55" opacity="0.45" stroke-linecap="round"/>
+  <line x1="-1.6" y1="46.8" x2="7.7" y2="50.5" stroke="#887020" stroke-width="0.55" opacity="0.36" stroke-linecap="round"/>
+  <line x1="-1.4" y1="52.3" x2="-20.3" y2="59.5" stroke="#887020" stroke-width="0.4" opacity="0.43" stroke-linecap="round"/>
+  <line x1="-1.4" y1="52.3" x2="6.8" y2="55.5" stroke="#887020" stroke-width="0.4" opacity="0.34" stroke-linecap="round"/>
+  <line x1="-1.2" y1="57.9" x2="-17.9" y2="63.9" stroke="#887020" stroke-width="0.4" opacity="0.41" stroke-linecap="round"/>
+  <line x1="-1.2" y1="57.9" x2="6.0" y2="60.4" stroke="#887020" stroke-width="0.4" opacity="0.33" stroke-linecap="round"/>
+  <line x1="-1.0" y1="63.4" x2="-15.3" y2="68.3" stroke="#887020" stroke-width="0.4" opacity="0.39" stroke-linecap="round"/>
+  <line x1="-1.0" y1="63.4" x2="5.0" y2="65.4" stroke="#887020" stroke-width="0.4" opacity="0.31" stroke-linecap="round"/>
+  <line x1="-0.7" y1="68.9" x2="-12.5" y2="72.7" stroke="#887020" stroke-width="0.4" opacity="0.37" stroke-linecap="round"/>
+  <line x1="-0.7" y1="68.9" x2="4.1" y2="70.4" stroke="#887020" stroke-width="0.4" opacity="0.29" stroke-linecap="round"/>
+  <line x1="-0.5" y1="74.4" x2="-9.3" y2="77.1" stroke="#887020" stroke-width="0.4" opacity="0.35" stroke-linecap="round"/>
+  <line x1="-0.5" y1="74.4" x2="3.0" y2="75.4" stroke="#887020" stroke-width="0.4" opacity="0.28" stroke-linecap="round"/>
+  <line x1="-0.2" y1="79.9" x2="-5.5" y2="81.4" stroke="#887020" stroke-width="0.4" opacity="0.32" stroke-linecap="round"/>
+  <line x1="-0.2" y1="79.9" x2="1.7" y2="80.4" stroke="#887020" stroke-width="0.4" opacity="0.26" stroke-linecap="round"/>
+  <path d="M 0,85.0 Q 1,105.0 1,125.0" fill="none" stroke="#b89050" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M 0,85.0 Q 0,105.0 0,125.0" fill="none" stroke="rgba(20,10,0,0.28)" stroke-width="0.7"/>
+  <path d="M 1,125.0 Q 2.5,135.0 1.5,143.0 Q 0,148.0 -1.5,143.0 Q -2,135.0 0,125.0 Z" fill="#887020" fill-opacity="0.92"/>
+  <line x1="0" y1="131.0" x2="0" y2="148.0" stroke="rgba(15,5,0,0.4)" stroke-width="0.5"/>
+  </g>
+</svg>
+
 <!-- HEADER -->
 <header>
   <div class="logo">The Letter Jar ✦</div>
@@ -418,25 +626,29 @@
       <div class="letter-badge" id="letterBadge">0</div>
       <svg class="jar-svg" viewBox="0 0 280 390" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <!-- Glass body: very subtle cool tint, mostly transparent -->
+          <!-- Clip to jar shape so highlights never bleed outside -->
+          <clipPath id="jarClip">
+            <path d="M62,104 Q56,112 50,130 L38,338 Q36,364 140,367 Q244,364 242,338 L230,130 Q224,112 218,104 Z"/>
+          </clipPath>
+          <!-- Glass body tint -->
           <linearGradient id="glassBody" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stop-color="#a8c4d0" stop-opacity="0.22"/>
-            <stop offset="12%"  stop-color="#d8eaf0" stop-opacity="0.08"/>
-            <stop offset="50%"  stop-color="#e8f4f8" stop-opacity="0.04"/>
-            <stop offset="82%"  stop-color="#c8dce8" stop-opacity="0.10"/>
-            <stop offset="100%" stop-color="#7aa0b8" stop-opacity="0.28"/>
+            <stop offset="0%"   stop-color="#b0ccd8" stop-opacity="0.20"/>
+            <stop offset="10%"  stop-color="#d8eaf2" stop-opacity="0.06"/>
+            <stop offset="50%"  stop-color="#eef6fa" stop-opacity="0.02"/>
+            <stop offset="88%"  stop-color="#c0d8e8" stop-opacity="0.08"/>
+            <stop offset="100%" stop-color="#80a8c0" stop-opacity="0.20"/>
           </linearGradient>
-          <!-- Left edge highlight -->
-          <linearGradient id="glassHighlightL" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stop-color="rgba(255,255,255,0.55)"/>
+          <!-- Left shine: white fading right -->
+          <linearGradient id="shineL" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="rgba(255,255,255,0.52)"/>
             <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
           </linearGradient>
-          <!-- Right edge shadow -->
-          <linearGradient id="glassHighlightR" x1="0%" y1="0%" x2="100%" y2="0%">
+          <!-- Right shadow: transparent to dark -->
+          <linearGradient id="shadowR" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%"   stop-color="rgba(0,0,0,0)"/>
-            <stop offset="100%" stop-color="rgba(30,20,10,0.25)"/>
+            <stop offset="100%" stop-color="rgba(18,10,3,0.24)"/>
           </linearGradient>
-          <!-- Lid gradients -->
+          <!-- Lid -->
           <linearGradient id="lidRed" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stop-color="#b08858"/><stop offset="42%" stop-color="#8a6840"/>
             <stop offset="100%" stop-color="#6a4828"/>
@@ -444,76 +656,63 @@
           <linearGradient id="lidBand" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stop-color="#c09a68"/><stop offset="100%" stop-color="#7a5838"/>
           </linearGradient>
-          <!-- Bottom shadow inside glass -->
-          <radialGradient id="glassBase" cx="50%" cy="100%">
-            <stop offset="0%"   stop-color="rgba(80,50,20,0.18)"/>
-            <stop offset="100%" stop-color="transparent"/>
-          </radialGradient>
-          <!-- Small jar gradients (read jar) -->
+          <!-- Small jar (unused but kept for safety) -->
           <linearGradient id="jarFillSmall" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stop-color="#a8c4d0" stop-opacity="0.22"/>
-            <stop offset="50%"  stop-color="#e8f4f8" stop-opacity="0.04"/>
-            <stop offset="100%" stop-color="#7aa0b8" stop-opacity="0.28"/>
+            <stop offset="0%"   stop-color="#b0ccd8" stop-opacity="0.18"/>
+            <stop offset="50%"  stop-color="#eef6fa" stop-opacity="0.02"/>
+            <stop offset="100%" stop-color="#80a8c0" stop-opacity="0.18"/>
           </linearGradient>
           <linearGradient id="lidRedSmall" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stop-color="#b08858"/><stop offset="100%" stop-color="#6a4828"/>
           </linearGradient>
         </defs>
 
-        <!-- Drop shadow beneath jar -->
-        <ellipse cx="140" cy="363" rx="98" ry="6" fill="rgba(0,0,0,0.35)"/>
+        <!-- Drop shadow -->
+        <ellipse cx="140" cy="365" rx="100" ry="7" fill="rgba(0,0,0,0.28)"/>
 
-        <!-- JAR BODY — clear glass -->
-        <!-- Glass fill (transparent tint) -->
+        <!-- Glass tint fill -->
         <path d="M62,104 Q56,112 50,130 L38,338 Q36,364 140,367 Q244,364 242,338 L230,130 Q224,112 218,104 Z"
               fill="url(#glassBody)"/>
-        <!-- Inner base shadow -->
+
+        <!-- Left highlight — clipped inside jar -->
+        <rect x="38" y="104" width="40" height="264" fill="url(#shineL)" clip-path="url(#jarClip)"/>
+        <!-- Thin bright inner edge -->
+        <rect x="38" y="104" width="14" height="264" fill="rgba(255,255,255,0.18)" clip-path="url(#jarClip)"/>
+
+        <!-- Right shadow — clipped inside jar -->
+        <rect x="202" y="104" width="42" height="264" fill="url(#shadowR)" clip-path="url(#jarClip)"/>
+
+        <!-- Faint horizontal refraction band -->
+        <rect x="38" y="188" width="204" height="18" fill="rgba(255,255,255,0.035)" clip-path="url(#jarClip)"/>
+
+        <!-- Warm inner base glow (contents colour) -->
+        <ellipse cx="140" cy="352" rx="96" ry="12" fill="rgba(185,150,95,0.07)" clip-path="url(#jarClip)"/>
+
+        <!-- Jar outline -->
         <path d="M62,104 Q56,112 50,130 L38,338 Q36,364 140,367 Q244,364 242,338 L230,130 Q224,112 218,104 Z"
-              fill="url(#glassBase)"/>
-        <!-- Glass outline — thin, crisp -->
-        <path d="M62,104 Q56,112 50,130 L38,338 Q36,364 140,367 Q244,364 242,338 L230,130 Q224,112 218,104 Z"
-              fill="none" stroke="rgba(200,225,240,0.55)" stroke-width="1.5"/>
+              fill="none" stroke="rgba(210,232,248,0.62)" stroke-width="1.5"/>
 
-        <!-- Left highlight strip (light catching the glass edge) -->
-        <path d="M62,104 Q56,112 50,130 L38,338 Q36,364 70,366"
-              fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="6" stroke-linecap="round"/>
-        <!-- Secondary left highlight (thinner) -->
-        <path d="M70,106 Q65,115 60,133 L50,320"
-              fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" stroke-linecap="round"/>
-
-        <!-- Right shadow edge -->
-        <path d="M218,104 Q224,112 230,130 L242,338 Q244,364 210,366"
-              fill="none" stroke="rgba(30,20,10,0.2)" stroke-width="6" stroke-linecap="round"/>
-
-        <!-- Subtle horizontal light band (refraction) -->
-        <path d="M48,195 Q140,188 232,195" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
-
-        <!-- Inner bottom warmth (contents tint) -->
-        <ellipse cx="140" cy="350" rx="94" ry="10" fill="rgba(200,170,110,0.08)"/>
-
-        <!-- Label area — faint etched rectangle -->
+        <!-- Label -->
         <rect x="90" y="200" width="100" height="72" rx="3"
-              fill="rgba(255,255,255,0.04)" stroke="rgba(200,175,130,0.25)" stroke-width="1" stroke-dasharray="3,3"/>
-        <text x="140" y="228" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-size="10" fill="rgba(220,190,140,0.55)">Letters</text>
-        <text x="140" y="244" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="8" fill="rgba(220,190,140,0.45)">— with love —</text>
-        <text x="140" y="260" text-anchor="middle" font-size="9" fill="rgba(220,190,140,0.4)">✦</text>
+              fill="rgba(255,255,255,0.025)" stroke="rgba(215,188,142,0.28)" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="140" y="228" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-size="10" fill="rgba(228,198,148,0.6)">Letters</text>
+        <text x="140" y="244" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="8" fill="rgba(228,198,148,0.46)">— with love —</text>
+        <text x="140" y="260" text-anchor="middle" font-size="9" fill="rgba(228,198,148,0.4)">✦</text>
 
-        <!-- Rim ellipse (top opening) -->
+        <!-- Rim -->
         <ellipse cx="140" cy="104" rx="78" ry="8"
-                 fill="rgba(210,230,240,0.12)" stroke="rgba(200,220,235,0.6)" stroke-width="1.2"/>
-        <!-- Rim highlight -->
-        <path d="M80,101 Q140,96 200,101" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+                 fill="rgba(215,235,248,0.1)" stroke="rgba(210,232,248,0.68)" stroke-width="1.5"/>
+        <path d="M82,101 Q140,96 198,101"
+              fill="none" stroke="rgba(255,255,255,0.58)" stroke-width="2" stroke-linecap="round"/>
 
-        <!-- LID BAND -->
-        <rect x="60" y="86" width="160" height="22" rx="5" fill="url(#lidBand)" stroke="rgba(200,165,100,0.5)" stroke-width="1"/>
-        <path d="M65,88 Q140,84 215,88" fill="none" stroke="rgba(255,225,170,0.3)" stroke-width="2" stroke-linecap="round"/>
+        <!-- Lid band -->
+        <rect x="60" y="86" width="160" height="22" rx="5" fill="url(#lidBand)" stroke="rgba(215,172,108,0.55)" stroke-width="1"/>
+        <path d="M66,89 Q140,85 214,89" fill="none" stroke="rgba(255,232,178,0.3)" stroke-width="2" stroke-linecap="round"/>
 
-        <!-- LID TOP -->
-        <rect x="70" y="64" width="140" height="26" rx="9" fill="url(#lidRed)" stroke="rgba(200,165,100,0.55)" stroke-width="1"/>
-        <!-- Lid highlight -->
-        <rect x="86" y="68" width="80" height="6" rx="3" fill="rgba(255,230,180,0.28)"/>
-        <!-- Lid knob suggestion -->
-        <ellipse cx="140" cy="64" rx="18" ry="4" fill="rgba(160,120,60,0.5)" stroke="rgba(200,165,100,0.4)" stroke-width="0.8"/>
+        <!-- Lid top -->
+        <rect x="70" y="64" width="140" height="26" rx="9" fill="url(#lidRed)" stroke="rgba(215,172,108,0.6)" stroke-width="1"/>
+        <rect x="86" y="68" width="82" height="6" rx="3" fill="rgba(255,238,188,0.3)"/>
+        <ellipse cx="140" cy="64" rx="18" ry="4" fill="rgba(155,115,58,0.55)" stroke="rgba(215,172,108,0.45)" stroke-width="0.8"/>
       </svg>
       <div class="jar-letters" id="jarLetters">
         <div class="empty-hint" id="emptyHint">no letters yet…<br>be the first</div>
@@ -536,53 +735,19 @@
       drop a letter in
     </button>
 
-    <!-- Read Jar -->
-    <div class="read-jar-section" id="readJarSection">
-      <div class="read-jar-label">Your read letters</div>
-      <div class="read-jar-scene" onclick="openReadJarModal()" title="View your read letters">
-        <div class="read-badge" id="readBadge">0</div>
-        <svg class="rj-svg" viewBox="0 0 140 200" xmlns="http://www.w3.org/2000/svg">
-          <!-- Shadow -->
-          <ellipse cx="70" cy="182" rx="50" ry="3" fill="rgba(0,0,0,0.3)"/>
-          <!-- Glass body -->
-          <path d="M30,55 Q27,60 24,70 L18,172 Q17,184 70,185 Q123,184 122,172 L116,70 Q113,60 110,55 Z"
-                fill="url(#jarFillSmall)" stroke="rgba(200,220,235,0.5)" stroke-width="1"/>
-          <!-- Left highlight -->
-          <path d="M30,55 Q27,60 24,70 L18,172 Q17,184 35,185"
-                fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="4" stroke-linecap="round"/>
-          <!-- Right shadow edge -->
-          <path d="M110,55 Q113,60 116,70 L122,172 Q123,184 105,185"
-                fill="none" stroke="rgba(30,20,10,0.15)" stroke-width="4" stroke-linecap="round"/>
-          <!-- Rim -->
-          <ellipse cx="70" cy="55" rx="40" ry="4.5"
-                   fill="rgba(210,230,240,0.1)" stroke="rgba(200,220,235,0.5)" stroke-width="0.8"/>
-          <path d="M42,53 Q70,50 98,53" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1" stroke-linecap="round"/>
-          <!-- Bottom shadow -->
-          <ellipse cx="70" cy="180" rx="51" ry="5" fill="rgba(80,50,18,0.12)"/>
-          <!-- Lid band -->
-          <rect x="29" y="46" width="82" height="12" rx="3" fill="url(#lidRedSmall)" stroke="rgba(200,165,100,0.45)" stroke-width="0.8"/>
-          <!-- Lid top -->
-          <rect x="34" y="36" width="72" height="13" rx="5" fill="url(#lidRedSmall)" stroke="rgba(200,165,100,0.5)" stroke-width="0.8" opacity="0.9"/>
-          <rect x="41" y="39" width="36" height="4" rx="2" fill="rgba(255,225,170,0.25)"/>
-          <text x="70" y="118" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-size="7" fill="rgba(220,190,140,0.45)">Read</text>
-          <text x="70" y="130" text-anchor="middle" font-size="6" fill="rgba(220,190,140,0.35)">✦</text>
-        </svg>
-        <div class="rj-letters" id="rjLetters"></div>
-      </div>
-    </div>
   </div>
 
   <!-- RIGHT: PANEL -->
   <div class="hero-right">
     <div class="recent-title" id="panelTitle">Letters</div>
     <div class="panel-tabs">
-      <button class="panel-tab active" onclick="switchTab('All')" id="tabAll">All <span class="tab-badge hidden" id="unreadBadge">0</span></button>
-      <button class="panel-tab" onclick="switchTab('Unread')" id="tabUnread">Unread <span class="tab-badge hidden" id="unreadBadge2">0</span></button>
+      <button class="panel-tab" onclick="switchTab('All')" id="tabAll">All <span class="tab-badge hidden" id="unreadBadge">0</span></button>
+      <button class="panel-tab active" onclick="switchTab('Unread')" id="tabUnread">Unread <span class="tab-badge hidden" id="unreadBadge2">0</span></button>
     </div>
-    <div class="tab-pane active" id="paneAll">
+    <div class="tab-pane" id="paneAll">
       <p class="no-letters-hint" id="noLettersHint">The jar awaits its first<br>folded secret…</p>
     </div>
-    <div class="tab-pane" id="paneUnread">
+    <div class="tab-pane active" id="paneUnread">
       <p class="no-letters-hint" id="noUnreadHint">You've read everything<br>in the jar ✦</p>
     </div>
   </div>
