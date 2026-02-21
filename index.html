@@ -131,9 +131,25 @@
   .jar-svg { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 30px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 30px rgba(180,210,230,0.1)); }
   .jar-letters { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); width: 170px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: center; gap: 4px; padding: 6px; overflow: hidden; max-height: 275px; }
 
-  .letter-slip { background: var(--paper); border-radius: 2px; padding: 5px 9px 5px 8px; font-family: 'Caveat', cursive; font-size: 11px; color: var(--ink); transform: rotate(calc(var(--r) * 1deg)); box-shadow: 1px 3px 6px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.65); max-width: 105px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; animation: dropIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; opacity: 0; cursor: pointer; border-left: 3px solid var(--crimson); transition: filter 0.2s, opacity 0.4s; position: relative; }
-  .letter-slip:hover { filter: brightness(1.08); }
-  .letter-slip.is-read.dropped { opacity: 0.45; }
+  .letter-slip { width: 68px; height: 48px; transform: rotate(calc(var(--r) * 1deg)); animation: dropIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; opacity: 0; cursor: pointer; transition: filter 0.2s, opacity 0.4s; position: relative; flex-shrink: 0; }
+  .letter-slip:hover { filter: brightness(1.18) drop-shadow(0 3px 8px rgba(0,0,0,0.5)); }
+  .letter-slip.is-read.dropped { opacity: 0.4; }
+  .letter-slip svg { width: 100%; height: 100%; }
+  /* Heart button */
+  .heart-btn { background: none; border: none; cursor: pointer; padding: 4px 6px; display: inline-flex; align-items: center; gap: 5px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.82rem; color: rgba(245,235,210,0.35); transition: color 0.2s, transform 0.2s; line-height: 1; }
+  .heart-btn:hover { color: rgba(220,80,80,0.8); transform: scale(1.1); }
+  .heart-btn.hearted { color: #e05060; }
+  .heart-btn svg { width: 14px; height: 14px; flex-shrink: 0; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+  .heart-btn.hearted svg { transform: scale(1.2); }
+  .heart-btn .heart-count { font-size: 0.78rem; }
+  /* Heart in read modal */
+  .read-heart-wrap { position: absolute; bottom: 20px; left: 24px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .read-heart-btn { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px; transition: transform 0.2s; }
+  .read-heart-btn:hover { transform: scale(1.12); }
+  .read-heart-btn svg { width: 28px; height: 28px; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+  .read-heart-btn.hearted svg { transform: scale(1.18); }
+  .read-heart-label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.62rem; letter-spacing: 0.12em; color: rgba(180,140,70,0.5); text-transform: uppercase; pointer-events: none; }
+  .read-heart-count { font-family: 'Playfair Display', serif; font-size: 0.8rem; color: rgba(245,235,210,0.45); }
   @keyframes dropIn { from { opacity: 0; transform: rotate(calc(var(--r)*1deg)) translateY(-40px) scale(0.8); } to { opacity: 1; transform: rotate(calc(var(--r)*1deg)) translateY(0) scale(1); } }
 
   .shared-banner { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 20px; font-family: 'Cormorant Garamond', serif; font-size: 0.82rem; letter-spacing: 0.08em; pointer-events: none; transition: opacity 0.5s; }
@@ -832,9 +848,18 @@
     <div class="read-from" id="readFrom"></div>
     <div class="read-divider"></div>
     <div class="read-body" id="readBody"></div>
+    <!-- Heart button (bottom left) -->
+    <div class="read-heart-wrap">
+      <button class="read-heart-btn" id="readHeartBtn" onclick="toggleHeart(currentReadId, event)" title="Heart this letter">
+        <svg viewBox="0 0 34 34" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 27s-10-6.3-10-13a7 7 0 0 1 10-6.05A7 7 0 0 1 27 14c0 6.7-10 13-10 13z" fill="none" stroke="#e05060" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+        <span class="read-heart-count" id="readHeartCount"></span>
+      </button>
+      <span class="read-wax-label">heart</span>
+    </div>
     <div class="read-wax-wrap" id="readWaxWrap">
-      <div class="read-delete-confirm" id="readDeleteConfirm">
-        <span class="read-delete-confirm-text">Delete this letter?</span>
+      <div class="read-delete-confirm" id="readDeleteConfirm">        <span class="read-delete-confirm-text">Delete this letter?</span>
         <div class="read-delete-confirm-btns">
           <button class="rdc-btn rdc-cancel" onclick="cancelDeleteLetter()">No</button>
           <button class="rdc-btn rdc-confirm" onclick="confirmDeleteLetter()">Yes, delete</button>
@@ -872,6 +897,7 @@ let jars = [];           // [{id, name, desc, createdAt}]
 let currentJarId = null;
 let letters = [];        // letters for currentJar
 let readIds = new Set(); // letter IDs read in currentJar this session
+let heartIds = new Set(); // letter IDs hearted by this session (personal)
 let sessionId = '';
 let selectedColor = '#c8192a';
 let pendingDeleteJarId = null;
@@ -945,6 +971,13 @@ async function switchToJar(jarId, animate) {
     if (r) readIds = new Set(JSON.parse(r.value));
   } catch {}
 
+  // Load heart IDs for this session + jar
+  heartIds = new Set();
+  try {
+    const h = await storage.get('hids:' + sessionId + ':' + jarId);
+    if (h) heartIds = new Set(JSON.parse(h.value));
+  } catch {}
+
   renderAll(animate !== false);
   renderJarDropdown();
   updateJarContext();
@@ -963,6 +996,47 @@ async function saveLetters() {
 
 async function saveReadIds() {
   try { await storage.set('rids:' + sessionId + ':' + currentJarId, JSON.stringify([...readIds])); } catch {}
+}
+
+async function saveHeartIds() {
+  try { await storage.set('hids:' + sessionId + ':' + currentJarId, JSON.stringify([...heartIds])); } catch {}
+}
+
+async function toggleHeart(id, e) {
+  if (e) { e.stopPropagation(); }
+  if (heartIds.has(id)) {
+    heartIds.delete(id);
+    // Decrement shared heart count on letter
+    const letter = letters.find(l => l.id === id);
+    if (letter) { letter.hearts = Math.max(0, (letter.hearts || 0) - 1); await saveLetters(); }
+  } else {
+    heartIds.add(id);
+    const letter = letters.find(l => l.id === id);
+    if (letter) { letter.hearts = (letter.hearts || 0) + 1; await saveLetters(); }
+  }
+  await saveHeartIds();
+  updateHeartUI(id);
+}
+
+function updateHeartUI(id) {
+  const letter = letters.find(l => l.id === id);
+  const count = letter ? (letter.hearts || 0) : 0;
+  const hearted = heartIds.has(id);
+  // Update all card heart buttons
+  document.querySelectorAll(`.heart-btn[data-id="${id}"]`).forEach(btn => {
+    btn.classList.toggle('hearted', hearted);
+    const countEl = btn.querySelector('.heart-count');
+    if (countEl) countEl.textContent = count > 0 ? count : '';
+    btn.querySelector('svg path').setAttribute('fill', hearted ? '#e05060' : 'none');
+  });
+  // Update read modal heart
+  const readBtn = document.getElementById('readHeartBtn');
+  if (readBtn && currentReadId === id) {
+    readBtn.classList.toggle('hearted', hearted);
+    const countEl = readBtn.querySelector('.read-heart-count');
+    if (countEl) countEl.textContent = count > 0 ? count : '';
+    readBtn.querySelector('svg path').setAttribute('fill', hearted ? '#e05060' : 'none');
+  }
 }
 
 // startPolling is defined below near the storage layer
@@ -1001,11 +1075,16 @@ function addSlipToJar(letter, animate) {
   slip.id = 'slip-' + letter.id;
   const r = seededRand(letter.id) * 28 - 14;
   slip.style.setProperty('--r', r.toFixed(1));
-  slip.style.borderLeftColor = letter.color || '#c8192a';
-  if (!animate) { slip.style.animation = 'none'; slip.style.opacity = isRead(letter.id) ? '0.45' : '1'; }
+  if (!animate) { slip.style.animation = 'none'; slip.style.opacity = isRead(letter.id) ? '0.4' : '1'; }
 
-  const words = (letter.body || '').split(' ');
-  slip.textContent = words.slice(0, 3).join(' ') + (words.length > 3 ? '…' : '');
+  const c = letter.color || '#c8192a';
+  // Envelope SVG with designated color
+  slip.innerHTML = `<svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg">
+    <rect x="1" y="1" width="66" height="46" rx="3" fill="${c}22" stroke="${c}" stroke-width="1.5"/>
+    <path d="M1,1 L34,26 L67,1" fill="none" stroke="${c}" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M1,47 L24,28" fill="none" stroke="${c}88" stroke-width="0.9"/>
+    <path d="M67,47 L44,28" fill="none" stroke="${c}88" stroke-width="0.9"/>
+  </svg>`;
 
   if (!isRead(letter.id)) {
     const dot = document.createElement('div');
@@ -1044,7 +1123,17 @@ function makeCard(letter) {
   card.style.setProperty('--env-color', letter.color || '#c8192a');
   const dotHtml = !isRead(letter.id)
     ? `<span class="card-unread-dot" id="cdot-${letter.id}"></span>` : '';
-  card.innerHTML = `<div class="recent-from">${dotHtml}— ${escHtml(letter.from)}</div>`;
+  const hearted = heartIds.has(letter.id);
+  const heartFill = hearted ? '#e05060' : 'none';
+  const heartCount = letter.hearts > 0 ? letter.hearts : '';
+  card.innerHTML = `
+    <div class="recent-from">${dotHtml}— ${escHtml(letter.from)}</div>
+    <button class="heart-btn${hearted ? ' hearted' : ''}" data-id="${letter.id}" onclick="toggleHeart('${letter.id}', event)" title="Heart this letter">
+      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 13.5s-6-3.8-6-8a4 4 0 0 1 6-3.46A4 4 0 0 1 14 5.5c0 4.2-6 8-6 8z" fill="${heartFill}" stroke="#e05060" stroke-width="1.3" stroke-linejoin="round"/>
+      </svg>
+      <span class="heart-count">${heartCount}</span>
+    </button>`;
   card.addEventListener('click', () => openRead(letter.id));
   return card;
 }
@@ -1295,6 +1384,12 @@ function openRead(id) {
   document.getElementById('readBody').textContent = letter.body;
   document.getElementById('readEnvStripe').style.background = letter.color || '#c8192a';
   document.getElementById('readWax').querySelector('circle').setAttribute('fill', (letter.color || '#c8192a') + '80');
+  // Heart button state
+  const hearted = heartIds.has(id);
+  const readHeartBtn = document.getElementById('readHeartBtn');
+  readHeartBtn.classList.toggle('hearted', hearted);
+  readHeartBtn.querySelector('svg path').setAttribute('fill', hearted ? '#e05060' : 'none');
+  document.getElementById('readHeartCount').textContent = letter.hearts > 0 ? letter.hearts : '';
   document.getElementById('readOverlay').classList.add('open');
   if (!isRead(id)) markRead(id);
 }
