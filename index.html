@@ -261,18 +261,35 @@
   .read-env-stripe { height: 3px; border-radius: 2px; margin-bottom: 24px; width: 100%; }
 
   /* READ JAR LIST MODAL */
-  .rj-modal { background: #1e160a; border: 1px solid rgba(160,120,60,0.3); border-radius: 4px; padding: 40px 44px; max-width: 440px; width: 100%; color: var(--cream); box-shadow: 0 30px 70px rgba(0,0,0,0.85); transform: scale(0.88) translateY(20px); transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); max-height: 80vh; overflow-y: auto; position: relative; }
+  .rj-modal { background: #1a1008; border: 1px solid rgba(160,120,60,0.3); border-radius: 4px; padding: 0; max-width: 520px; width: 100%; color: var(--cream); box-shadow: 0 30px 70px rgba(0,0,0,0.9); transform: scale(0.88) translateY(20px); transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); max-height: 82vh; overflow: hidden; position: relative; display: flex; flex-direction: column; }
   .read-overlay.open .rj-modal { transform: scale(1) translateY(0); }
-  .rj-modal::-webkit-scrollbar { width: 3px; }
-  .rj-modal::-webkit-scrollbar-thumb { background: rgba(180,140,70,0.32); }
-  .rj-modal-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.5rem; color: var(--cream); margin-bottom: 6px; }
-  .rj-modal-sub { font-style: italic; font-size: 0.9rem; color: rgba(245,232,224,0.35); margin-bottom: 24px; }
-  .rj-list-item { border: 1px solid rgba(150,110,50,0.2); border-radius: 2px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.25s; background: rgba(35,22,8,0.5); position: relative; overflow: hidden; }
-  .rj-list-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--env-color, var(--crimson)); }
-  .rj-list-item:hover { background: rgba(45,28,10,0.65); border-color: rgba(180,140,70,0.32); transform: translateX(3px); }
-  .rj-item-from { font-family: 'Caveat', cursive; font-size: 0.8rem; color: var(--crimson-bright); margin-bottom: 4px; }
-  .rj-item-preview { font-family: 'Caveat', cursive; font-size: 1rem; color: rgba(245,235,210,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .rj-empty { font-style: italic; color: rgba(245,235,210,0.25); font-size: 1rem; margin-top: 10px; }
+  .rj-modal-header { padding: 28px 36px 20px; border-bottom: 1px solid rgba(160,120,60,0.2); flex-shrink: 0; }
+  .rj-modal-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.5rem; color: var(--cream); margin-bottom: 4px; }
+  .rj-modal-sub { font-style: italic; font-size: 0.88rem; color: rgba(245,232,224,0.32); }
+  .rj-scroll-area { overflow-y: auto; flex: 1; padding: 24px 36px 32px; }
+  .rj-scroll-area::-webkit-scrollbar { width: 3px; }
+  .rj-scroll-area::-webkit-scrollbar-thumb { background: rgba(180,140,70,0.32); border-radius: 2px; }
+  .rj-letter-card { border: 1px solid rgba(150,110,50,0.18); border-radius: 4px; margin-bottom: 16px; background: rgba(30,18,6,0.7); overflow: hidden; transition: border-color 0.25s; }
+  .rj-letter-card:hover { border-color: rgba(180,140,70,0.35); }
+  .rj-letter-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px 12px; cursor: pointer; position: relative; }
+  .rj-letter-header::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--env-color, var(--crimson)); border-radius: 4px 0 0 4px; }
+  .rj-env-icon { width: 32px; height: 23px; flex-shrink: 0; }
+  .rj-sender { font-family: 'Caveat', cursive; font-size: 1rem; color: var(--crimson-bright); flex: 1; }
+  .rj-unread-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--crimson-bright); box-shadow: 0 0 5px rgba(180,140,70,0.8); animation: pulse-dot 1.8s ease-in-out infinite; flex-shrink: 0; }
+  .rj-chevron { font-size: 0.6rem; color: rgba(245,235,210,0.3); transition: transform 0.3s; flex-shrink: 0; }
+  .rj-letter-card.open .rj-chevron { transform: rotate(180deg); }
+  .rj-heart-inline { display: flex; align-items: center; gap: 4px; font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; color: rgba(245,235,210,0.3); flex-shrink: 0; }
+  .rj-heart-inline svg { width: 12px; height: 12px; }
+  .rj-letter-body { max-height: 0; overflow: hidden; transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1), padding 0.3s; padding: 0 18px; }
+  .rj-letter-card.open .rj-letter-body { max-height: 600px; padding: 0 18px 18px; }
+  .rj-body-divider { height: 1px; background: rgba(160,120,60,0.18); margin-bottom: 14px; }
+  .rj-body-text { font-family: 'Caveat', cursive; font-size: 1.25rem; line-height: 1.9; color: rgba(245,238,220,0.82); white-space: pre-wrap; }
+  .rj-body-actions { display: flex; justify-content: flex-end; margin-top: 12px; gap: 10px; align-items: center; }
+  .rj-heart-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 5px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.82rem; color: rgba(245,235,210,0.35); transition: color 0.2s, transform 0.2s; padding: 4px 6px; }
+  .rj-heart-btn:hover { color: rgba(220,80,80,0.8); transform: scale(1.08); }
+  .rj-heart-btn.hearted { color: #e05060; }
+  .rj-heart-btn svg { width: 14px; height: 14px; }
+  .rj-empty { font-style: italic; color: rgba(245,235,210,0.22); font-size: 1rem; text-align: center; padding: 40px 0; line-height: 2; }
 
   /* DELETE CONFIRM */
   .confirm-text { font-style: italic; font-size: 1rem; color: rgba(245,235,210,0.55); line-height: 1.7; margin-bottom: 28px; }
@@ -627,7 +644,7 @@
     <p class="hero-desc">Every letter carries a piece of you. Write something tender, something true — fold it up and drop it in for someone to find.</p>
     <div class="cta-group">
       <button class="btn-primary" onclick="openModal()">Write your letter</button>
-      <button class="btn-ghost" onclick="scrollJar()">Read the jar</button>
+      <button class="btn-ghost" onclick="openReadJarModal()">Read the jar</button>
     </div>
 
     <!-- Current jar context -->
@@ -881,9 +898,11 @@
 <div class="read-overlay" id="rjOverlay" onclick="handleRjClick(event)">
   <div class="rj-modal">
     <button class="read-close" onclick="closeRjModal()">×</button>
-    <div class="rj-modal-title">Your Read Letters</div>
-    <p class="rj-modal-sub">Letters you've already unfolded ✦</p>
-    <div id="rjModalList"></div>
+    <div class="rj-modal-header">
+      <div class="rj-modal-title">Letters in the Jar</div>
+      <p class="rj-modal-sub">Click any letter to read it ✦</p>
+    </div>
+    <div class="rj-scroll-area" id="rjModalList"></div>
   </div>
 </div>
 
@@ -1463,16 +1482,98 @@ async function confirmDeleteLetter() {
 function openReadJarModal() {
   const list = document.getElementById('rjModalList');
   list.innerHTML = '';
-  const readLetters = letters.filter(l => isRead(l.id)).slice().reverse();
-  if (!readLetters.length) { list.innerHTML = '<p class="rj-empty">Nothing read yet…</p>'; }
-  else readLetters.forEach(l => {
-    const item = document.createElement('div');
-    item.className = 'rj-list-item'; item.style.setProperty('--env-color', l.color || '#c8192a');
-    item.innerHTML = `<div class="rj-item-from">— ${escHtml(l.from)}</div><div class="rj-item-preview">${escHtml(l.body)}</div>`;
-    item.addEventListener('click', () => { closeRjModal(); setTimeout(() => openRead(l.id), 200); });
-    list.appendChild(item);
+
+  if (!letters.length) {
+    list.innerHTML = '<p class="rj-empty">The jar is empty…<br>be the first to write ✦</p>';
+    document.getElementById('rjOverlay').classList.add('open');
+    return;
+  }
+
+  // Show all letters, unread first
+  const sorted = [...letters].sort((a,b) => {
+    const aRead = isRead(a.id) ? 1 : 0;
+    const bRead = isRead(b.id) ? 1 : 0;
+    return aRead - bRead || b.ts - a.ts;
   });
+
+  sorted.forEach(l => {
+    const c = l.color || '#c8192a';
+    const hearted = heartIds.has(l.id);
+    const heartFill = hearted ? '#e05060' : 'none';
+    const heartCount = l.hearts > 0 ? l.hearts : '';
+    const unreadPip = !isRead(l.id) ? `<span class="rj-unread-pip"></span>` : '';
+
+    const card = document.createElement('div');
+    card.className = 'rj-letter-card';
+    card.id = 'rjcard-' + l.id;
+    card.style.setProperty('--env-color', c);
+    card.innerHTML = `
+      <div class="rj-letter-header" onclick="toggleRjCard('${l.id}')">
+        <svg class="rj-env-icon" viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="66" height="46" rx="3" fill="${c}" stroke="rgba(255,255,255,0.45)" stroke-width="2"/>
+          <path d="M1,1 L34,26 L67,1" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M1,47 L24,28" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+          <path d="M67,47 L44,28" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        </svg>
+        <span class="rj-sender">— ${escHtml(l.from)}</span>
+        ${unreadPip}
+        <span class="rj-heart-inline">
+          <svg viewBox="0 0 16 16" fill="${heartFill}" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 13.5s-6-3.8-6-8a4 4 0 0 1 6-3.46A4 4 0 0 1 14 5.5c0 4.2-6 8-6 8z" stroke="#e05060" stroke-width="1.2" stroke-linejoin="round"/>
+          </svg>
+          ${heartCount}
+        </span>
+        <span class="rj-chevron">▼</span>
+      </div>
+      <div class="rj-letter-body" id="rjbody-${l.id}">
+        <div class="rj-body-divider"></div>
+        <div class="rj-body-text">${escHtml(l.body)}</div>
+        <div class="rj-body-actions">
+          <button class="rj-heart-btn${hearted ? ' hearted' : ''}" data-id="${l.id}" onclick="toggleHeart('${l.id}', event); refreshRjCard('${l.id}')" title="Heart">
+            <svg viewBox="0 0 16 16" fill="${heartFill}" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 13.5s-6-3.8-6-8a4 4 0 0 1 6-3.46A4 4 0 0 1 14 5.5c0 4.2-6 8-6 8z" stroke="#e05060" stroke-width="1.3" stroke-linejoin="round"/>
+            </svg>
+            <span>${heartCount ? heartCount + ' ' : ''}heart</span>
+          </button>
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
+
   document.getElementById('rjOverlay').classList.add('open');
+}
+
+function toggleRjCard(id) {
+  const card = document.getElementById('rjcard-' + id);
+  if (!card) return;
+  const isOpen = card.classList.contains('open');
+  // Close all others
+  document.querySelectorAll('.rj-letter-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) {
+    card.classList.add('open');
+    if (!isRead(id)) markRead(id);
+  }
+}
+
+function refreshRjCard(id) {
+  const letter = letters.find(l => l.id === id);
+  if (!letter) return;
+  const hearted = heartIds.has(id);
+  const heartFill = hearted ? '#e05060' : 'none';
+  const count = letter.hearts > 0 ? letter.hearts : '';
+  // Update inline heart in header
+  const card = document.getElementById('rjcard-' + id);
+  if (!card) return;
+  const inline = card.querySelector('.rj-heart-inline');
+  if (inline) {
+    inline.innerHTML = `<svg viewBox="0 0 16 16" fill="${heartFill}" xmlns="http://www.w3.org/2000/svg"><path d="M8 13.5s-6-3.8-6-8a4 4 0 0 1 6-3.46A4 4 0 0 1 14 5.5c0 4.2-6 8-6 8z" stroke="#e05060" stroke-width="1.2" stroke-linejoin="round"/></svg>${count}`;
+  }
+  const btn = card.querySelector('.rj-heart-btn');
+  if (btn) {
+    btn.classList.toggle('hearted', hearted);
+    btn.querySelector('svg path').setAttribute('fill', heartFill);
+    btn.querySelector('span').textContent = (count ? count + ' ' : '') + 'heart';
+  }
 }
 function closeRjModal() { document.getElementById('rjOverlay').classList.remove('open'); }
 function handleRjClick(e) { if (e.target === document.getElementById('rjOverlay')) closeRjModal(); }
