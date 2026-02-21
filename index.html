@@ -119,7 +119,7 @@
     margin-top: 38px; padding-top: 26px;
     border-top: 1px solid rgba(160,120,60,0.25);
   }
-  .jar-context-label { font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(180,140,70,0.65); margin-bottom: 6px; }
+  .jar-context-label { font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(200,160,80,0.9); margin-bottom: 6px; }
   .jar-context-name { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.8rem; color: var(--cream); line-height: 1.1; }
   .jar-context-count { font-style: italic; font-size: 0.9rem; color: rgba(245,235,210,0.3); margin-top: 4px; }
 
@@ -401,6 +401,79 @@
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   footer { position: relative; z-index: 10; text-align: center; padding: 18px 18px 58px; border-top: 1px solid rgba(160,120,60,0.15); font-style: italic; font-size: 0.82rem; color: rgba(245,235,210,0.18); }
+
+  /* FEEDBACK VIEWER MODAL */
+  .fb-viewer-overlay { position: fixed; inset: 0; background: rgba(5,3,1,0.92); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 120; opacity: 0; pointer-events: none; transition: opacity 0.4s; padding: 20px; }
+  .fb-viewer-overlay.open { opacity: 1; pointer-events: all; }
+  .fb-viewer-modal {
+    background: #1a1006; border: 1px solid rgba(160,120,60,0.38); border-radius: 5px;
+    width: 100%; max-width: 600px; max-height: 88vh;
+    display: flex; flex-direction: column;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.9), 0 0 60px rgba(80,50,18,0.25);
+    transform: scale(0.9) translateY(20px); transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative; overflow: hidden;
+  }
+  .fb-viewer-overlay.open .fb-viewer-modal { transform: scale(1) translateY(0); }
+  .fb-viewer-header {
+    padding: 32px 38px 22px; border-bottom: 1px solid rgba(160,120,60,0.2);
+    flex-shrink: 0;
+  }
+  .fb-viewer-title { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 400; font-style: italic; color: var(--cream); margin-bottom: 4px; }
+  .fb-viewer-sub { font-style: italic; font-size: 0.9rem; color: rgba(245,235,210,0.35); }
+  .fb-viewer-close { position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 1.5rem; color: rgba(245,235,210,0.35); cursor: pointer; line-height: 1; transition: color 0.2s; padding: 4px 8px; }
+  .fb-viewer-close:hover { color: var(--rose-light); }
+  .fb-viewer-scroll { flex: 1; overflow-y: auto; padding: 20px 38px 28px; display: flex; flex-direction: column; gap: 14px; }
+  .fb-viewer-scroll::-webkit-scrollbar { width: 4px; }
+  .fb-viewer-scroll::-webkit-scrollbar-thumb { background: rgba(180,140,70,0.3); border-radius: 2px; }
+
+  .fb-entry {
+    background: rgba(30,20,8,0.7); border: 1px solid rgba(150,110,50,0.22);
+    border-radius: 4px; padding: 16px 20px;
+    transition: border-color 0.25s, background 0.25s;
+    position: relative;
+  }
+  .fb-entry:hover { border-color: rgba(180,140,70,0.38); background: rgba(38,26,10,0.8); }
+  .fb-entry-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .fb-entry-name { font-family: 'Caveat', cursive; font-size: 1.05rem; color: var(--crimson-bright); flex: 1; }
+  .fb-entry-date { font-style: italic; font-size: 0.75rem; color: rgba(245,235,210,0.28); flex-shrink: 0; }
+  .fb-entry-msg { font-family: 'Caveat', cursive; font-size: 1.15rem; line-height: 1.8; color: rgba(245,238,220,0.78); white-space: pre-wrap; margin-bottom: 12px; }
+  .fb-entry-actions { display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
+
+  .fb-like-btn {
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.82rem;
+    color: rgba(245,235,210,0.35); transition: color 0.2s, transform 0.2s; padding: 4px 8px;
+    border-radius: 20px; border: 1px solid transparent;
+  }
+  .fb-like-btn:hover { color: rgba(220,80,80,0.8); transform: scale(1.08); border-color: rgba(220,80,80,0.2); }
+  .fb-like-btn.liked { color: #e05060; border-color: rgba(224,80,96,0.28); background: rgba(224,80,96,0.06); }
+  .fb-like-btn svg { width: 13px; height: 13px; flex-shrink: 0; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+  .fb-like-btn.liked svg { transform: scale(1.2); }
+
+  .fb-del-btn {
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.8rem;
+    color: rgba(245,235,210,0.2); transition: color 0.2s; padding: 4px 8px;
+    border-radius: 20px; border: 1px solid transparent;
+  }
+  .fb-del-btn:hover { color: rgba(200,100,80,0.75); border-color: rgba(200,100,80,0.2); }
+
+  .fb-del-confirm {
+    display: none; align-items: center; gap: 8px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.82rem;
+    color: rgba(245,235,210,0.5);
+  }
+  .fb-del-confirm.visible { display: flex; }
+  .fb-dc-btn { background: none; border: 1px solid rgba(160,120,60,0.3); border-radius: 2px; padding: 3px 12px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+  .fb-dc-yes { color: rgba(200,80,60,0.8); border-color: rgba(200,80,60,0.35); }
+  .fb-dc-yes:hover { background: rgba(200,80,60,0.15); }
+  .fb-dc-no { color: rgba(245,235,210,0.4); }
+  .fb-dc-no:hover { background: rgba(255,255,255,0.05); }
+
+  .fb-empty { font-style: italic; color: rgba(245,235,210,0.22); font-size: 1rem; text-align: center; padding: 50px 0; line-height: 2; }
+  .fb-count-badge { display: inline-flex; align-items: center; justify-content: center; background: var(--crimson); color: var(--cream); font-size: 0.65rem; font-style: normal; font-family: 'Playfair Display', serif; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; padding: 0 4px; margin-left: 5px; vertical-align: middle; }
 </style>
 </head>
 <body>
@@ -728,6 +801,7 @@
     <a onclick="openModal()">Write a Letter</a>
     <a onclick="openCreateJar()">New Jar</a>
     <a onclick="openFeedback()">Comments &amp; Suggestions</a>
+    <a onclick="openFeedbackViewer()" id="viewFeedbackLink">View All <span id="fbNavBadge" style="display:none;" class="fb-count-badge">0</span></a>
   </nav>
 </header>
 
@@ -1035,40 +1109,72 @@
   </div>
 </div>
 
+<!-- FEEDBACK VIEWER MODAL -->
+<div class="fb-viewer-overlay" id="fbViewerOverlay" onclick="handleFbViewerClick(event)">
+  <div class="fb-viewer-modal">
+    <button class="fb-viewer-close" onclick="closeFeedbackViewer()">×</button>
+    <div class="fb-viewer-header">
+      <div class="fb-viewer-title">Comments &amp; Suggestions</div>
+      <div class="fb-viewer-sub" id="fbViewerSub">All messages from your visitors</div>
+    </div>
+    <div class="fb-viewer-scroll" id="fbViewerList"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <div class="shared-banner" id="sharedBanner" style="opacity:0"></div>
 
 <script>
 // ═══════════════════════════════════════════
 //  STATE
+//  All mutable app state lives here at the top.
+//  These variables are read and written throughout
+//  the codebase, so centralising them makes it easy
+//  to see what the app "knows" at any moment.
 // ═══════════════════════════════════════════
-let jars = [];           // [{id, name, desc, createdAt}]
-let currentJarId = null;
-let letters = [];        // letters for currentJar
-let readIds = new Set(); // letter IDs read in currentJar this session
-let heartIds = new Set(); // letter IDs hearted by this session (personal)
-let sessionId = '';
-let selectedColor = '#c8192a';
-let selectedCategory = '';
-let pendingDeleteJarId = null;
-let pollTimer = null;
-let rjActiveFilter = 'all';
+
+let jars = [];            // Array of jar objects: [{id, name, desc, createdAt}]
+let currentJarId = null;  // ID of the jar currently being viewed
+let letters = [];         // Letters belonging to the current jar
+let readIds = new Set();  // Set of letter IDs the user has already opened (per session+jar)
+let heartIds = new Set(); // Set of letter IDs the user has hearted (per session+jar)
+let sessionId = '';       // Unique ID for this browser session — used to scope personal data
+let selectedColor = '#c8192a';  // Currently chosen envelope colour in the write modal
+let selectedCategory = '';      // Currently chosen category tag in the write modal
+let pendingDeleteJarId = null;  // Holds the jar ID waiting for delete confirmation
+let pollTimer = null;     // Reference to the setInterval timer for live polling
+let rjActiveFilter = 'all'; // Currently active category filter in the Read Jar modal
 
 // ═══════════════════════════════════════════
 //  INIT
+//  Entry point. Runs once on page load.
+//  Responsibilities:
+//    1. Establish a session ID for this browser
+//    2. Load the list of jars (local cache first, Firebase fallback)
+//    3. Pick which jar to show (last used, or first, or create default)
+//    4. Immediately show jar name before async loading begins
+//    5. Hand off to switchToJar to load letters and render everything
 // ═══════════════════════════════════════════
 async function init() {
-  // Session ID
+  // Restore or create a unique session ID stored in localStorage.
+  // This scopes personal data (read history, hearts) to this browser.
   try {
     const s = await storage.get('sid');
     sessionId = s ? s.value : genId('sid');
     if (!s) await storage.set('sid', sessionId);
   } catch { sessionId = genId('sid'); try { await storage.set('sid', sessionId); } catch {} }
 
-  // Load jars list
+  // Load jars list — tries localStorage cache first for instant response,
+  // then waits up to 1.2s for Firebase if the local cache is empty
+  // (e.g. first-ever visit with no cached data).
   await loadJarsList();
+  if (jars.length === 0 && _fbReady && _isOnline) {
+    await new Promise(r => setTimeout(r, 1200));
+    await loadJarsList();
+  }
 
-  // Pick last used jar or first available
+  // Try to restore the last jar the user was viewing in a previous session.
+  // Falls back to the first jar in the list if no match is found.
   try {
     const last = await storage.get('last-jar:' + sessionId);
     if (last && jars.find(j => j.id === last.value)) {
@@ -1078,26 +1184,51 @@ async function init() {
 
   if (!currentJarId && jars.length > 0) currentJarId = jars[0].id;
 
-  // If no jars exist, create the default
+  // First-time user: no jars exist yet, so create the default jar.
   if (jars.length === 0) {
     await createDefaultJar();
   }
 
+  // Paint the jar name into the UI immediately — before the async
+  // loadLetters call in switchToJar — so there's no blank flash.
+  const earlyJar = jars.find(j => j.id === currentJarId);
+  if (earlyJar) {
+    const nameEl = document.getElementById('jarContextName');
+    const nameDisp = document.getElementById('jarNameDisplay');
+    const panelTit = document.getElementById('panelTitle');
+    if (nameEl)   nameEl.textContent   = earlyJar.name;
+    if (nameDisp) nameDisp.textContent = earlyJar.name;
+    if (panelTit) panelTit.textContent = earlyJar.name;
+  }
+
+  // Load letters and render the full UI for the selected jar.
   await switchToJar(currentJarId, false);
+
+  // Start the background polling loop that watches Firebase
+  // for new letters and jar changes from other users.
   startPolling();
 }
 
+// Fetches the list of all jars from storage (shared/Firebase).
+// Validates the result is an array before assigning, to guard
+// against corrupt or unexpected data formats.
 async function loadJarsList() {
   try {
     const r = await storage.get('jars', true);
-    jars = r ? JSON.parse(r.value) : [];
+    const parsed = r ? JSON.parse(r.value) : [];
+    jars = Array.isArray(parsed) ? parsed : [];
   } catch { jars = []; }
+  // Immediately update the jar name display any time jars are reloaded.
+  if (currentJarId) updateJarContext();
 }
 
+// Persists the current jars array to shared storage (Firebase + local cache).
 async function saveJarsList() {
   try { await storage.set('jars', JSON.stringify(jars), true); } catch {}
 }
 
+// Creates the first-time default jar for new users.
+// Generates a unique ID, adds it to the jars array, saves, and sets it as current.
 async function createDefaultJar() {
   const jar = { id: genId('jar'), name: 'The Letter Jar', desc: 'A place for all letters', createdAt: Date.now() };
   jars.push(jar);
@@ -1107,80 +1238,122 @@ async function createDefaultJar() {
 
 // ═══════════════════════════════════════════
 //  JAR SWITCHING
+//  Called whenever the user picks a different jar.
+//  Updates currentJarId, reloads letters, read/heart
+//  state, and re-renders all UI panels.
 // ═══════════════════════════════════════════
 async function switchToJar(jarId, animate) {
   currentJarId = jarId;
+
+  // Persist the chosen jar so it can be restored on next page load.
   try { await storage.set('last-jar:' + sessionId, jarId); } catch {}
 
-  // Load letters for this jar
+  // Immediately write the jar name to all display elements so there's
+  // no blank gap while loadLetters (an async Firebase call) completes.
+  const jarObj = jars.find(j => j.id === jarId);
+  if (jarObj) {
+    const nameEl = document.getElementById('jarContextName');
+    const nameDisp = document.getElementById('jarNameDisplay');
+    const panelTit = document.getElementById('panelTitle');
+    if (nameEl)   nameEl.textContent   = jarObj.name;
+    if (nameDisp) nameDisp.textContent = jarObj.name;
+    if (panelTit) panelTit.textContent = jarObj.name;
+  }
+
+  // Fetch the letters for this jar from storage.
   await loadLetters();
 
-  // Load read IDs for this session + jar
+  // Restore which letters this user has already read for this jar.
+  // Stored in localStorage only — personal data, not shared.
   readIds = new Set();
   try {
     const r = await storage.get('rids:' + sessionId + ':' + jarId);
     if (r) readIds = new Set(JSON.parse(r.value));
   } catch {}
 
-  // Load heart IDs for this session + jar
+  // Restore which letters this user has hearted for this jar.
+  // Also personal/local — hearts on the letter itself are shared, but
+  // tracking which ones *you* hearted is kept in your localStorage.
   heartIds = new Set();
   try {
     const h = await storage.get('hids:' + sessionId + ':' + jarId);
     if (h) heartIds = new Set(JSON.parse(h.value));
   } catch {}
 
+  // Rebuild the full UI: jar slips, side panel cards, read jar section.
   renderAll(animate !== false);
   renderJarDropdown();
   updateJarContext();
 }
 
+// Loads the letters array for the current jar from storage.
+// Validates that the result is an array (guards against bad data).
 async function loadLetters() {
   try {
     const r = await storage.get('letters:' + currentJarId, true);
-    letters = r ? JSON.parse(r.value) : [];
+    const parsed = r ? JSON.parse(r.value) : [];
+    letters = Array.isArray(parsed) ? parsed : [];
   } catch { letters = []; }
 }
 
+// Saves the current letters array back to shared storage (Firebase + cache).
 async function saveLetters() {
   try { await storage.set('letters:' + currentJarId, JSON.stringify(letters), true); } catch {}
 }
 
+// Saves the set of read letter IDs to localStorage (personal, not shared).
 async function saveReadIds() {
   try { await storage.set('rids:' + sessionId + ':' + currentJarId, JSON.stringify([...readIds])); } catch {}
 }
 
+// Saves the set of hearted letter IDs to localStorage (personal, not shared).
 async function saveHeartIds() {
   try { await storage.set('hids:' + sessionId + ':' + currentJarId, JSON.stringify([...heartIds])); } catch {}
 }
 
+// ═══════════════════════════════════════════
+//  HEARTS
+//  Toggling a heart does two things:
+//    1. Updates the personal heartIds set (localStorage)
+//    2. Increments/decrements the shared heart count on the letter (Firebase)
+//  This means the total count is visible to everyone, but each user's
+//  own toggle state is tracked privately in their browser.
+// ═══════════════════════════════════════════
 async function toggleHeart(id, e) {
-  if (e) { e.stopPropagation(); }
+  if (e) { e.stopPropagation(); } // Prevent click bubbling to the card/modal
   if (heartIds.has(id)) {
+    // User is un-hearting: remove from personal set and decrement shared count
     heartIds.delete(id);
-    // Decrement shared heart count on letter
     const letter = letters.find(l => l.id === id);
     if (letter) { letter.hearts = Math.max(0, (letter.hearts || 0) - 1); await saveLetters(); }
   } else {
+    // User is hearting: add to personal set and increment shared count
     heartIds.add(id);
     const letter = letters.find(l => l.id === id);
     if (letter) { letter.hearts = (letter.hearts || 0) + 1; await saveLetters(); }
   }
   await saveHeartIds();
+  // Refresh all heart button appearances in the DOM
   updateHeartUI(id);
 }
 
+// Updates every visible heart button for a given letter ID —
+// there may be multiple (side panel card + read modal) so we
+// query all of them rather than tracking references.
 function updateHeartUI(id) {
   const letter = letters.find(l => l.id === id);
   const count = letter ? (letter.hearts || 0) : 0;
   const hearted = heartIds.has(id);
-  // Update all card heart buttons
+
+  // Update all panel card heart buttons with matching data-id
   document.querySelectorAll(`.heart-btn[data-id="${id}"]`).forEach(btn => {
     btn.classList.toggle('hearted', hearted);
     const countEl = btn.querySelector('.heart-count');
     if (countEl) countEl.textContent = count > 0 ? count : '';
     btn.querySelector('svg path').setAttribute('fill', hearted ? '#e05060' : 'none');
   });
-  // Update read modal heart
+
+  // Also update the heart button inside the open read modal if it's showing this letter
   const readBtn = document.getElementById('readHeartBtn');
   if (readBtn && currentReadId === id) {
     readBtn.classList.toggle('hearted', hearted);
@@ -1190,46 +1363,65 @@ function updateHeartUI(id) {
   }
 }
 
-// startPolling is defined below near the storage layer
+// startPolling is defined further below near the storage layer
 
 // ═══════════════════════════════════════════
 //  RENDER
+//  renderAll() is the master re-render function.
+//  It clears and rebuilds: the jar (envelope slips),
+//  the side panel (All/Unread tabs), the read jar strip,
+//  and all counters/badges.
 // ═══════════════════════════════════════════
 function renderAll(animate) {
-  // Clear jar
+  // Reset the jar visual — show empty hint if no letters, otherwise clear for slips
   const jar = document.getElementById('jarLetters');
   jar.innerHTML = letters.length === 0
     ? '<div class="empty-hint" id="emptyHint">no letters yet…<br>be the first</div>'
     : '';
 
-  // Clear panels
+  // Clear both side panel tabs so they can be rebuilt by renderPanelGroups
   document.getElementById('paneAll').innerHTML = '';
   document.getElementById('paneUnread').innerHTML = '';
 
+  // Add each letter as an envelope slip inside the jar SVG area
   letters.forEach(l => {
     addSlipToJar(l, animate === true);
   });
+
+  // Rebuild the side panel with category grouping
   renderPanelGroups();
 
+  // Rebuild the "letters you've read" strip at the bottom of the page
   renderReadJar();
+
+  // Update the unread count badge and jar context text
   updateStats();
   updateNoUnreadHint();
 }
 
+// Creates and inserts one envelope slip into the jar visual for a letter.
+// The slip gets a seeded random rotation angle so each envelope looks
+// slightly different but always lands in the same position on reload.
 function addSlipToJar(letter, animate) {
   const container = document.getElementById('jarLetters');
+
+  // Remove the "no letters yet" hint when the first letter is added
   const hint = document.getElementById('emptyHint');
   if (hint) hint.remove();
 
   const slip = document.createElement('div');
   slip.className = 'letter-slip' + (isRead(letter.id) ? ' is-read dropped' : '');
   slip.id = 'slip-' + letter.id;
+
+  // Seeded rotation so the same letter always gets the same tilt angle
   const r = seededRand(letter.id) * 28 - 14;
   slip.style.setProperty('--r', r.toFixed(1));
+
+  // Skip the drop-in animation if we're doing a cold load (not a new letter)
   if (!animate) { slip.style.animation = 'none'; slip.style.opacity = isRead(letter.id) ? '0.4' : '1'; }
 
   const c = letter.color || '#c8192a';
-  // Envelope SVG with designated color - solid fill, visible outline
+  // Render the envelope as an inline SVG using the letter's chosen colour
   slip.innerHTML = `<svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg">
     <rect x="1" y="1" width="66" height="46" rx="3" fill="${c}" stroke="rgba(255,255,255,0.55)" stroke-width="2"/>
     <path d="M1,1 L34,26 L67,1" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.4" stroke-linejoin="round"/>
@@ -1237,19 +1429,29 @@ function addSlipToJar(letter, animate) {
     <path d="M67,47 L44,28" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
   </svg>`;
 
+  // Show a glowing dot on unread envelopes to draw the user's eye
   if (!isRead(letter.id)) {
     const dot = document.createElement('div');
     dot.className = 'unread-dot'; dot.id = 'dot-' + letter.id;
     slip.appendChild(dot);
   }
+
+  // Clicking any slip opens the full letter read modal
   slip.addEventListener('click', () => openRead(letter.id));
   container.appendChild(slip);
 
-  // Keep badge in sync with jar contents
+  // Keep the letter count badge in the header in sync with actual jar contents
   const badge = document.getElementById('letterBadge');
   if (badge) badge.textContent = container.querySelectorAll('.letter-slip').length;
 }
 
+// ═══════════════════════════════════════════
+//  SIDE PANEL GROUPS
+//  Rebuilds both the All and Unread tab panes,
+//  grouping letters by category under collapsible
+//  headers. If all letters are uncategorised,
+//  they render flat with no header clutter.
+// ═══════════════════════════════════════════
 function renderPanelGroups() {
   const allPane = document.getElementById('paneAll');
   const unreadPane = document.getElementById('paneUnread');
@@ -1258,13 +1460,15 @@ function renderPanelGroups() {
 
   if (!letters.length) return;
 
-  // Sort: unread first, then newest
+  // Sort: unread letters float to the top, then newest first within each read state
   const sorted = [...letters].sort((a,b) => {
     const aRead = isRead(a.id) ? 1 : 0;
     const bRead = isRead(b.id) ? 1 : 0;
     return aRead - bRead || b.ts - a.ts;
   });
 
+  // Groups a flat list of letters into a sorted Map of category → letters[].
+  // Letters without a category go into the '✦ Uncategorised' bucket, always last.
   function buildGroups(list) {
     const groups = new Map();
     list.forEach(l => {
@@ -1279,17 +1483,24 @@ function renderPanelGroups() {
     });
   }
 
+  // Renders a grouped list of letters into a pane element.
+  // Skips group headers when there's only one group and it's uncategorised.
   function appendGroupsToPane(pane, list) {
     if (!list.length) return;
     const groups = buildGroups(list);
-    // If only one group and it's uncategorised, render flat (no header clutter)
+
+    // Single uncategorised group: render flat (no cluttering header)
     if (groups.length === 1 && groups[0][0] === '✦ Uncategorised') {
       groups[0][1].forEach(l => pane.appendChild(makeCard(l)));
       return;
     }
+
+    // Multiple groups: render each with a collapsible header
     groups.forEach(([groupName, groupLetters]) => {
       const group = document.createElement('div');
       group.className = 'panel-group';
+
+      // Header row: title + count + expanding line + chevron
       const header = document.createElement('div');
       header.className = 'panel-group-header';
       header.innerHTML = `
@@ -1297,26 +1508,34 @@ function renderPanelGroups() {
         <span class="panel-group-count">${groupLetters.length}</span>
         <span class="panel-group-line"></span>
         <span class="panel-group-chevron">▼</span>`;
-      header.onclick = () => group.classList.toggle('collapsed');
+      header.onclick = () => group.classList.toggle('collapsed'); // Toggle collapse on click
+
       const body = document.createElement('div');
       body.className = 'panel-group-body';
       groupLetters.forEach(l => body.appendChild(makeCard(l)));
+
       group.appendChild(header);
       group.appendChild(body);
       pane.appendChild(group);
     });
   }
 
+  // Populate the All tab with every letter grouped by category
   appendGroupsToPane(allPane, sorted);
+  // Populate the Unread tab with only unread letters
   appendGroupsToPane(unreadPane, sorted.filter(l => !isRead(l.id)));
 }
 
+// Called when a single new letter is added (e.g. after submit or live poll).
+// Re-renders the full panel groups so the new letter appears in the right group.
+// Sort order handles whether it should prepend or append.
 function addCardToPanel(letter, prepend) {
-  // Just re-render groups — prepend is handled by sort order
   renderPanelGroups();
   updateNoUnreadHint();
 }
 
+// After a letter is marked as read and fades out of the Unread tab,
+// removes any group container that has become empty as a result.
 function cleanEmptyPanelGroups(paneId) {
   const pane = document.getElementById(paneId);
   if (!pane) return;
@@ -1325,16 +1544,23 @@ function cleanEmptyPanelGroups(paneId) {
   });
 }
 
+// Builds a single letter card element for the side panel.
+// Each card shows the sender name, an unread dot (if applicable),
+// and a heart button. Clicking the card opens the read modal.
 function makeCard(letter) {
   const card = document.createElement('div');
   card.className = 'recent-card' + (isRead(letter.id) ? ' card-read' : '');
   card.id = 'card-' + letter.id;
+  // CSS variable used by the ::before pseudo-element for the coloured left border
   card.style.setProperty('--env-color', letter.color || '#c8192a');
+
+  // Unread dot shown as a small glowing circle next to the sender name
   const dotHtml = !isRead(letter.id)
     ? `<span class="card-unread-dot" id="cdot-${letter.id}"></span>` : '';
   const hearted = heartIds.has(letter.id);
   const heartFill = hearted ? '#e05060' : 'none';
   const heartCount = letter.hearts > 0 ? letter.hearts : '';
+
   card.innerHTML = `
     <div class="recent-from">${dotHtml}— ${escHtml(letter.from)}</div>
     <button class="heart-btn${hearted ? ' hearted' : ''}" data-id="${letter.id}" onclick="toggleHeart('${letter.id}', event)" title="Heart this letter">
@@ -1347,20 +1573,25 @@ function makeCard(letter) {
   return card;
 }
 
+// Rebuilds the "read jar" strip at the bottom of the page —
+// the row of small letter slips showing letters the user has already opened.
+// Only visible when at least one letter has been read.
 function renderReadJar() {
   const rjContainer = document.getElementById('rjLetters');
   rjContainer.innerHTML = '';
   const readLetters = letters.filter(l => isRead(l.id));
   const section = document.getElementById('readJarSection');
+
   if (readLetters.length > 0) {
     section.classList.add('visible');
     document.getElementById('readBadge').textContent = readLetters.length;
     readLetters.forEach(l => {
       const slip = document.createElement('div');
       slip.className = 'rj-slip';
-      const r = seededRand(l.id + 'r') * 20 - 10;
+      const r = seededRand(l.id + 'r') * 20 - 10; // seeded tilt for consistency
       slip.style.setProperty('--r', r.toFixed(1));
       slip.style.borderLeftColor = l.color || '#c8192a';
+      // Show first 2 words of letter body as a preview label
       const words = (l.body || '').split(' ');
       slip.textContent = words.slice(0, 2).join(' ') + (words.length > 2 ? '…' : '');
       rjContainer.appendChild(slip);
@@ -1370,13 +1601,17 @@ function renderReadJar() {
   }
 }
 
+// Updates the letter count badge in the header and the unread badges
+// on the All/Unread tab buttons. Also refreshes the "currently viewing" text.
 function updateStats() {
   const n = letters.length;
   const unc = letters.filter(l => !isRead(l.id)).length;
   const badge = document.getElementById('letterBadge');
-  // Fallback: count slips in jar DOM in case letters array is momentarily stale
+  // Fallback: count slips in the jar DOM in case letters array is momentarily stale
   const domCount = document.querySelectorAll('#jarLetters .letter-slip').length;
   badge.textContent = Math.max(n, domCount);
+
+  // Show/hide unread count badge on both tab buttons
   ['unreadBadge','unreadBadge2'].forEach(id => {
     const el = document.getElementById(id);
     el.textContent = unc;
@@ -1385,18 +1620,31 @@ function updateStats() {
   updateJarContext();
 }
 
+// Updates the "Currently viewing" section on the hero left panel:
+// shows the jar name and a letter/unread count summary.
 function updateJarContext() {
   const jar = jars.find(j => j.id === currentJarId);
-  if (!jar) return;
-  document.getElementById('jarContextName').textContent = jar.name;
+  const nameEl   = document.getElementById('jarContextName');
+  const countEl  = document.getElementById('jarContextCount');
+  const nameDisp = document.getElementById('jarNameDisplay');
+  const panelTit = document.getElementById('panelTitle');
+
+  // Update all three display locations with the jar name
+  if (jar) {
+    if (nameEl)   nameEl.textContent   = jar.name;
+    if (nameDisp) nameDisp.textContent = jar.name;
+    if (panelTit) panelTit.textContent = jar.name;
+  }
+
+  // Build the descriptive count string shown under the jar name
   const unc = letters.filter(l => !isRead(l.id)).length;
-  document.getElementById('jarContextCount').textContent =
+  if (countEl) countEl.textContent = !jar ? '' :
     letters.length === 0 ? 'empty — write the first letter'
     : `${letters.length} letter${letters.length !== 1 ? 's' : ''}${unc > 0 ? `, ${unc} unread` : ''}`;
-  document.getElementById('jarNameDisplay').textContent = jar.name;
-  document.getElementById('panelTitle').textContent = jar.name;
 }
 
+// Shows or hides the "You've read everything in the jar" hint
+// in the Unread tab based on whether there are any unread cards visible.
 function updateNoUnreadHint() {
   const pane = document.getElementById('paneUnread');
   const cards = pane.querySelectorAll('.recent-card');
@@ -1409,38 +1657,55 @@ function updateNoUnreadHint() {
 
 // ═══════════════════════════════════════════
 //  JAR DROPDOWN
+//  The header jar-switcher dropdown. Shows all jars
+//  with their letter counts. Letter counts for non-active
+//  jars are loaded lazily in the background so the UI
+//  opens instantly without waiting for Firebase reads.
 // ═══════════════════════════════════════════
 function renderJarDropdown() {
   const list = document.getElementById('jarDropdownList');
   list.innerHTML = '';
+
   jars.forEach(jar => {
-    const count = getJarLetterCount(jar.id); // cached or 0
+    const count = getJarLetterCount(jar.id); // Use cached count if available
     const opt = document.createElement('div');
     opt.className = 'jar-option' + (jar.id === currentJarId ? ' active-jar' : '');
     opt.innerHTML = `<span class="jar-opt-name">${escHtml(jar.name)}</span><span class="jar-opt-count">${count} letter${count !== 1 ? 's' : ''}</span>`;
+
+    // Only show delete button when there are multiple jars
     if (jars.length > 1) {
       const del = document.createElement('button');
       del.className = 'jar-opt-del'; del.textContent = '✕'; del.title = 'Delete jar';
       del.addEventListener('click', e => { e.stopPropagation(); openDeleteJar(jar.id); });
       opt.appendChild(del);
     }
+
+    // Clicking an option switches to that jar and closes the dropdown
     opt.addEventListener('click', async () => {
       closeJarDropdown();
       if (jar.id !== currentJarId) await switchToJar(jar.id, true);
     });
     list.appendChild(opt);
   });
-  document.getElementById('jarNameDisplay').textContent = jars.find(j => j.id === currentJarId)?.name || '—';
+
+  // Update the button label to show the current jar name (only if found)
+  const currentJarName = jars.find(j => j.id === currentJarId)?.name;
+  if (currentJarName) document.getElementById('jarNameDisplay').textContent = currentJarName;
 }
 
-// Cache letter counts so dropdown doesn't lag
+// In-memory cache of letter counts for non-active jars.
+// Avoids repeated Firebase reads every time the dropdown opens.
 const jarCountCache = {};
+
+// Returns the letter count for a jar — from live array if it's current,
+// or from the cache if it's a different jar.
 function getJarLetterCount(jarId) {
   if (jarId === currentJarId) { jarCountCache[jarId] = letters.length; return letters.length; }
   return jarCountCache[jarId] || 0;
 }
 
-// Load letter counts for other jars in background
+// Fires in the background when the dropdown opens, fetching letter counts
+// for jars other than the current one, then re-renders the dropdown with real numbers.
 async function loadOtherJarCounts() {
   for (const jar of jars) {
     if (jar.id === currentJarId) continue;
@@ -1452,6 +1717,8 @@ async function loadOtherJarCounts() {
   renderJarDropdown();
 }
 
+// Toggles the jar dropdown open/closed. Also triggers a background
+// count refresh so non-active jar counts stay up to date.
 function toggleJarDropdown(e) {
   e.stopPropagation();
   const wrap = document.getElementById('jarSelectorWrap');
@@ -1464,28 +1731,34 @@ function closeJarDropdown() {
   document.getElementById('jarSelectorWrap').classList.remove('open');
 }
 
+// Close the dropdown whenever the user clicks outside of it
 document.addEventListener('click', e => {
   if (!document.getElementById('jarSelectorWrap').contains(e.target)) closeJarDropdown();
 });
 
 // ═══════════════════════════════════════════
-//  CREATE JAR
+//  CREATE JAR MODAL
 // ═══════════════════════════════════════════
+
 function openCreateJar() {
   closeJarDropdown();
   document.getElementById('createJarOverlay').classList.add('open');
   setTimeout(() => document.getElementById('jarNameInput').focus(), 300);
 }
+
 function closeCreateJar() {
   document.getElementById('createJarOverlay').classList.remove('open');
   document.getElementById('jarNameInput').value = '';
   document.getElementById('jarDescInput').value = '';
 }
+
 function handleCreateJarClick(e) { if (e.target === document.getElementById('createJarOverlay')) closeCreateJar(); }
 
+// Validates the jar name, creates the jar object, saves it, and switches to it.
 async function createJar() {
   const name = document.getElementById('jarNameInput').value.trim();
   if (!name) {
+    // Flash the input border red to indicate validation failure
     document.getElementById('jarNameInput').style.borderColor = 'rgba(200,25,42,0.8)';
     setTimeout(() => document.getElementById('jarNameInput').style.borderColor = '', 800);
     return;
@@ -1500,74 +1773,296 @@ async function createJar() {
 }
 
 // ═══════════════════════════════════════════
-//  DELETE JAR
+//  DELETE JAR MODAL
 // ═══════════════════════════════════════════
+
+// Opens the delete confirmation modal and populates it with the jar name
+// and approximate letter count so the user knows what they're deleting.
 function openDeleteJar(jarId) {
   pendingDeleteJarId = jarId;
   const jar = jars.find(j => j.id === jarId);
   document.getElementById('deleteJarNameDisplay').textContent = jar?.name || 'this jar';
-  // Show approximate count
   const cnt = jarId === currentJarId ? letters.length : (jarCountCache[jarId] || '?');
   document.getElementById('deleteJarCountDisplay').textContent = cnt;
   document.getElementById('deleteJarOverlay').classList.add('open');
 }
+
 function closeDeleteJar() { document.getElementById('deleteJarOverlay').classList.remove('open'); pendingDeleteJarId = null; }
 function handleDeleteJarClick(e) { if (e.target === document.getElementById('deleteJarOverlay')) closeDeleteJar(); }
 
-// ── FEEDBACK ──
+// ═══════════════════════════════════════════
+//  FEEDBACK / COMMENTS MODAL
+//  Saves user feedback to Firebase so the app owner
+//  can review it. Name is optional (defaults to Anonymous).
+// ═══════════════════════════════════════════
 function openFeedback() {
   document.getElementById("feedbackName").value = "";
   document.getElementById("feedbackMsg").value = "";
   document.getElementById("feedbackOverlay").classList.add("open");
 }
+
 function closeFeedback() { document.getElementById("feedbackOverlay").classList.remove("open"); }
 function handleFeedbackClick(e) { if (e.target === document.getElementById("feedbackOverlay")) closeFeedback(); }
+
 async function submitFeedback() {
   const name = document.getElementById("feedbackName").value.trim() || "Anonymous";
   const msg  = document.getElementById("feedbackMsg").value.trim();
-  if (!msg) { document.getElementById("feedbackMsg").focus(); return; }
-  const entry = { name, msg, ts: Date.now() };
+  if (!msg) { document.getElementById("feedbackMsg").focus(); return; } // Require a message
+
+  const entry = { id: genId('fb'), name, msg, ts: Date.now(), likes: 0 };
   try {
-    const existing = await storage.get("feedback", true);
-    const list = existing ? JSON.parse(existing.value) : [];
+    let list = [];
+    try { const r = await storage.get('feedback', true); if (r) list = JSON.parse(r.value); } catch {}
+    if (!Array.isArray(list)) list = [];
     list.push(entry);
-    await storage.set("feedback", JSON.stringify(list), true);
+    await storage.set('feedback', JSON.stringify(list), true);
   } catch {}
   closeFeedback();
   showToast("Thank you for your feedback ✦");
+  updateFbNavBadge();
 }
 
+// ═══════════════════════════════════════════
+//  FEEDBACK VIEWER
+//  Lets the creator/users browse, heart/like, and delete
+//  individual comments & suggestions.
+// ═══════════════════════════════════════════
 
+let fbLikedIds = new Set(); // IDs of feedback entries the user has liked (personal/local)
+let fbPendingDelete = null; // ID of entry awaiting delete confirmation
+
+// Loads feedback liked IDs from localStorage (personal, not shared)
+async function loadFbLikedIds() {
+  try {
+    const r = await storage.get('fb-likes:' + sessionId);
+    if (r) fbLikedIds = new Set(JSON.parse(r.value));
+  } catch { fbLikedIds = new Set(); }
+}
+async function saveFbLikedIds() {
+  try { await storage.set('fb-likes:' + sessionId, JSON.stringify([...fbLikedIds])); } catch {}
+}
+
+// Updates the "View All" nav badge with current feedback count
+async function updateFbNavBadge() {
+  try {
+    let list = [];
+    try { const r = await storage.get('feedback', true); if (r) { const p = JSON.parse(r.value); if (Array.isArray(p)) list = p; } } catch {}
+    const badge = document.getElementById('fbNavBadge');
+    if (badge) {
+      if (list.length > 0) {
+        badge.textContent = list.length;
+        badge.style.display = '';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  } catch {}
+}
+
+// Opens the feedback viewer modal and renders all entries
+async function openFeedbackViewer() {
+  await loadFbLikedIds();
+  await renderFbViewer();
+  document.getElementById('fbViewerOverlay').classList.add('open');
+}
+
+function closeFeedbackViewer() {
+  document.getElementById('fbViewerOverlay').classList.remove('open');
+  fbPendingDelete = null;
+}
+
+function handleFbViewerClick(e) {
+  if (e.target === document.getElementById('fbViewerOverlay')) closeFeedbackViewer();
+}
+
+// Renders the full feedback list into the viewer modal
+async function renderFbViewer() {
+  const list_el = document.getElementById('fbViewerList');
+  const sub = document.getElementById('fbViewerSub');
+  list_el.innerHTML = '';
+
+  let feedbackList = [];
+  try {
+    const r = await storage.get('feedback', true);
+    if (r) { const parsed = JSON.parse(r.value); if (Array.isArray(parsed)) feedbackList = parsed; }
+  } catch {}
+
+  if (!feedbackList.length) {
+    list_el.innerHTML = '<div class="fb-empty">No comments yet…<br>be the first to share ✦</div>';
+    if (sub) sub.textContent = 'No messages yet';
+    return;
+  }
+
+  // Newest first
+  const sorted = [...feedbackList].sort((a,b) => b.ts - a.ts);
+  if (sub) sub.textContent = `${sorted.length} message${sorted.length === 1 ? '' : 's'} from your visitors`;
+
+  sorted.forEach(entry => {
+    list_el.appendChild(makeFbEntryEl(entry));
+  });
+}
+
+// Builds a single feedback entry element
+function makeFbEntryEl(entry) {
+  const liked = fbLikedIds.has(entry.id);
+  const likeCount = entry.likes || 0;
+  const date = new Date(entry.ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  const el = document.createElement('div');
+  el.className = 'fb-entry';
+  el.id = 'fb-entry-' + entry.id;
+  el.innerHTML = `
+    <div class="fb-entry-header">
+      <span class="fb-entry-name">— ${escHtml(entry.name)}</span>
+      <span class="fb-entry-date">${date}</span>
+    </div>
+    <div class="fb-entry-msg">${escHtml(entry.msg)}</div>
+    <div class="fb-entry-actions">
+      <button class="fb-like-btn${liked ? ' liked' : ''}" id="fb-like-${entry.id}" onclick="toggleFbLike('${entry.id}')" title="Like this">
+        <svg viewBox="0 0 16 16" fill="${liked ? '#e05060' : 'none'}" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 13.5s-6-3.8-6-8a4 4 0 0 1 6-3.46A4 4 0 0 1 14 5.5c0 4.2-6 8-6 8z" stroke="#e05060" stroke-width="1.3" stroke-linejoin="round"/>
+        </svg>
+        <span id="fb-like-count-${entry.id}">${likeCount > 0 ? likeCount + ' ' : ''}like</span>
+      </button>
+      <button class="fb-del-btn" onclick="confirmDeleteFb('${entry.id}')" title="Delete this comment">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:13px;height:13px;">
+          <path d="M3 5h10M6 5V3h4v2M7 8v4M9 8v4M4 5l1 8h6l1-8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        delete
+      </button>
+    </div>`;
+  return el;
+}
+
+// Toggle like on a feedback entry
+async function toggleFbLike(id) {
+  let feedbackList = [];
+  try { const r = await storage.get('feedback', true); if (r) { const p = JSON.parse(r.value); if (Array.isArray(p)) feedbackList = p; } } catch { return; }
+  const entry = feedbackList.find(f => f.id === id);
+  if (!entry) return;
+
+  if (fbLikedIds.has(id)) {
+    fbLikedIds.delete(id);
+    entry.likes = Math.max(0, (entry.likes || 0) - 1);
+  } else {
+    fbLikedIds.add(id);
+    entry.likes = (entry.likes || 0) + 1;
+  }
+
+  try { await storage.set('feedback', JSON.stringify(feedbackList), true); } catch {}
+  await saveFbLikedIds();
+
+  // Update DOM
+  const liked = fbLikedIds.has(id);
+  const btn = document.getElementById('fb-like-' + id);
+  const countEl = document.getElementById('fb-like-count-' + id);
+  if (btn) {
+    btn.classList.toggle('liked', liked);
+    btn.querySelector('svg path').setAttribute('fill', liked ? '#e05060' : 'none');
+  }
+  if (countEl) countEl.textContent = (entry.likes > 0 ? entry.likes + ' ' : '') + 'like';
+}
+
+// Show inline delete confirmation
+function promptDeleteFb(id) {
+  // Hide any other open confirmations first
+  if (fbPendingDelete && fbPendingDelete !== id) cancelDeleteFb(fbPendingDelete);
+  fbPendingDelete = id;
+  const dc = document.getElementById('fb-dc-' + id);
+  if (dc) dc.classList.add('visible');
+}
+
+function cancelDeleteFb(id) {
+  fbPendingDelete = null;
+  const dc = document.getElementById('fb-dc-' + id);
+  if (dc) dc.classList.remove('visible');
+}
+
+// Permanently deletes a feedback entry
+async function confirmDeleteFb(id) {
+  let feedbackList = [];
+  try { const r = await storage.get('feedback', true); if (r) { const p = JSON.parse(r.value); if (Array.isArray(p)) feedbackList = p; } } catch {}
+  feedbackList = feedbackList.filter(f => f.id !== id);
+  try { await storage.set('feedback', JSON.stringify(feedbackList), true); } catch {}
+
+  // Remove the element from DOM with a fade
+  const el = document.getElementById('fb-entry-' + id);
+  if (el) {
+    el.style.transition = 'opacity 0.3s, transform 0.3s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(10px)';
+    setTimeout(() => el.remove(), 320);
+  }
+
+  fbPendingDelete = null;
+  fbLikedIds.delete(id);
+  await saveFbLikedIds();
+  showToast('Comment removed ✦');
+
+  // Update sub heading count
+  const sub = document.getElementById('fbViewerSub');
+  if (sub) {
+    const remaining = feedbackList.length;
+    if (remaining === 0) {
+      setTimeout(() => {
+        const list_el = document.getElementById('fbViewerList');
+        if (list_el) list_el.innerHTML = '<div class="fb-empty">No comments yet…<br>be the first to share ✦</div>';
+        if (sub) sub.textContent = 'No messages yet';
+      }, 350);
+    } else {
+      sub.textContent = `${remaining} message${remaining === 1 ? '' : 's'} from your visitors`;
+    }
+  }
+
+  updateFbNavBadge();
+}
+
+// Removes the jar and all its letters from storage.
+// If this was the only jar, creates a fresh default one.
+// Switches to the next available jar after deletion.
 async function confirmDeleteJar() {
   if (!pendingDeleteJarId) return;
   const id = pendingDeleteJarId;
-  // Remove from list
   jars = jars.filter(j => j.id !== id);
   await saveJarsList();
-  // Delete letters
+  // Also delete the letters stored under this jar's key
   try { await storage.delete('letters:' + id, true); } catch {}
   closeDeleteJar();
 
-  if (jars.length === 0) await createDefaultJar();
+  if (jars.length === 0) await createDefaultJar(); // Always keep at least one jar
   const nextId = id === currentJarId ? jars[0].id : currentJarId;
   await switchToJar(nextId, true);
   showToast('Jar deleted');
 }
 
 // ═══════════════════════════════════════════
-//  WRITE + SUBMIT
+//  WRITE LETTER MODAL
+//  Includes the category picker, envelope colour
+//  wheel, and the From/Body fields.
+// ═══════════════════════════════════════════
+
+// Toggles the category tag picker open/closed.
+// The row starts collapsed so it doesn't take up space by default.
 function toggleCatRow() {
   document.getElementById('catRow').classList.toggle('open');
 }
 
 // ── CATEGORY HELPERS ──
+
+// Default category tags shown to every user.
+// These are merged with any custom categories already used in the jar.
 const DEFAULT_CATS = ['Love', 'Gratitude', 'Hope', 'Confession', 'Memory', 'Dream', 'Apology', 'Joy'];
 
+// Returns a deduplicated list of all categories: defaults + any that
+// have already been used by letters in the current jar.
 function getUsedCategories() {
   const used = new Set(letters.map(l => l.category).filter(Boolean));
   return [...new Set([...DEFAULT_CATS, ...used])];
 }
 
+// Rebuilds the category tag pills inside the write modal.
+// Highlights the currently selected tag, and when collapsed
+// shows the selected name inline on the label row.
 function renderCatTags() {
   const wrap = document.getElementById('catTags');
   if (!wrap) return;
@@ -1576,13 +2071,16 @@ function renderCatTags() {
     const t = document.createElement('button');
     t.className = 'cat-tag' + (selectedCategory === cat ? ' selected' : '');
     t.textContent = cat;
+    // Clicking a selected tag deselects it; clicking an unselected one selects it
     t.onclick = () => {
       selectedCategory = selectedCategory === cat ? '' : cat;
       renderCatTags();
     };
     wrap.appendChild(t);
   });
-  // Show selected value on the label when collapsed
+
+  // Show the selected category name on the label row when the picker is collapsed,
+  // so users can see their choice without needing to expand the section.
   const label = document.querySelector('#catRow .cat-label');
   if (label) {
     const existing = label.querySelector('.cat-selected-preview');
@@ -1598,6 +2096,8 @@ function renderCatTags() {
   }
 }
 
+// Adds the value from the "type a new one" input as a custom category,
+// capitalising the first letter for consistency.
 function catAddNew() {
   const input = document.getElementById('catNewInput');
   const val = input.value.trim();
@@ -1607,22 +2107,25 @@ function catAddNew() {
   renderCatTags();
 }
 
+// Allows pressing Enter in the custom category input to add the tag.
 function catInputKey(e) {
   if (e.key === 'Enter') { e.preventDefault(); catAddNew(); }
 }
 
-// ═══════════════════════════════════════════
+// Opens the write letter modal and resets all fields to defaults.
 function openModal() {
   document.getElementById('overlay').classList.add('open');
-  selectedColor = '#c8192a';
-  selectedCategory = '';
+  selectedColor = '#c8192a';    // Reset to default envelope colour
+  selectedCategory = '';         // Clear any previously selected category
   document.getElementById('colorWheelInput').value = '#c8192a';
   document.getElementById('colorPreview').style.background = '#c8192a';
   document.getElementById('catNewInput').value = '';
-  document.getElementById('catRow').classList.remove('open');
+  document.getElementById('catRow').classList.remove('open'); // Collapse category picker
   renderCatTags();
   setTimeout(() => document.getElementById('fromField').focus(), 350);
 }
+
+// Closes the write modal and clears all field values.
 function closeModal() {
   document.getElementById('overlay').classList.remove('open');
   document.getElementById('fromField').value = '';
@@ -1631,125 +2134,172 @@ function closeModal() {
   document.getElementById('catRow').classList.remove('open');
   selectedCategory = '';
 }
+
+// Click on the dark overlay background to close the modal.
 function handleOverlayClick(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
+// Validates and submits the letter. Requires a body; From defaults to Anonymous.
+// Saves to storage, updates the UI jar and panel, then closes the modal.
 async function submitLetter() {
   const from = document.getElementById('fromField').value.trim() || 'Anonymous';
   const body = document.getElementById('letterBody').value.trim();
+
   if (!body) {
+    // Flash the textarea border red if the body is empty
     const ta = document.getElementById('letterBody');
     ta.style.borderColor = 'rgba(200,25,42,0.8)';
     ta.focus();
     setTimeout(() => ta.style.borderColor = '', 900);
     return;
   }
+
+  // Build the letter object — category is only included if one was selected
   const letter = { id: genId('ltr'), from, body, color: selectedColor, ts: Date.now() };
   if (selectedCategory) letter.category = selectedCategory;
+
   letters.push(letter);
   await saveLetters();
 
+  // Remove the "no letters yet" hint if it's showing
   const hint = document.getElementById('emptyHint');
   if (hint) hint.remove();
+
+  // Animate the new envelope dropping into the jar and add its card to the panel
   addSlipToJar(letter, true);
   addCardToPanel(letter, true);
   updateStats();
   closeModal();
   showToast('Your letter found its place ✦');
-  bumpBadge();
+  bumpBadge(); // Briefly animate the letter count badge
 }
 
+// Triggers a short pop/bump animation on the header letter count badge.
 function bumpBadge() {
   const b = document.getElementById('letterBadge');
   b.classList.add('bump');
   setTimeout(() => b.classList.remove('bump'), 400);
 }
 
+// Called when the colour wheel input changes — updates the preview swatch
+// and the selectedColor state variable used when submitting the letter.
 function onColorWheel(value) {
   selectedColor = value;
   document.getElementById('colorPreview').style.background = value;
 }
 
 // ═══════════════════════════════════════════
-//  READ
+//  READ LETTER MODAL
+//  Opens when a user clicks an envelope slip or panel card.
+//  Shows the full letter body, sender, category badge,
+//  heart button, and delete (wax seal) button.
 // ═══════════════════════════════════════════
-let currentReadId = null;
+let currentReadId = null; // Tracks which letter is currently open in the read modal
 
+// Opens the read modal for a specific letter ID.
+// Populates all fields, then marks the letter as read.
 function openRead(id) {
   currentReadId = id;
   const letter = letters.find(l => l.id === id);
   if (!letter) return;
+
   document.getElementById('readFrom').textContent = '— from ' + letter.from;
   document.getElementById('readBody').textContent = letter.body;
-  // Category badge
+
+  // Show or hide the category badge below the sender name
   const catWrap = document.getElementById('readCategory');
   const catBadge = document.getElementById('readCategoryBadge');
   if (letter.category) { catBadge.textContent = letter.category; catWrap.style.display = ''; }
   else { catWrap.style.display = 'none'; }
+
+  // Colour the top stripe and the wax seal to match the envelope colour
   document.getElementById('readEnvStripe').style.background = letter.color || '#c8192a';
   document.getElementById('readWax').querySelector('circle').setAttribute('fill', (letter.color || '#c8192a') + '80');
-  // Heart button state
+
+  // Set heart button to filled/outline depending on whether user has hearted this letter
   const hearted = heartIds.has(id);
   const readHeartBtn = document.getElementById('readHeartBtn');
   readHeartBtn.classList.toggle('hearted', hearted);
   readHeartBtn.querySelector('svg path').setAttribute('fill', hearted ? '#e05060' : 'none');
   document.getElementById('readHeartCount').textContent = letter.hearts > 0 ? letter.hearts : '';
+
   document.getElementById('readOverlay').classList.add('open');
+
+  // Mark as read the first time this letter is opened (updates UI + persists)
   if (!isRead(id)) markRead(id);
 }
 
+// Records a letter as read: persists to storage, fades the jar slip,
+// dims the panel card, and removes it from the Unread tab.
 async function markRead(id) {
   readIds.add(id);
   await saveReadIds();
 
+  // Fade and drop the envelope slip inside the jar
   const slip = document.getElementById('slip-' + id);
   if (slip) {
     slip.classList.add('is-read', 'dropped');
     const dot = document.getElementById('dot-' + id);
     if (dot) { dot.style.transition='opacity 0.4s'; dot.style.opacity='0'; setTimeout(()=>dot.remove(),400); }
   }
+
+  // Dim the card in the All tab and remove its unread dot
   document.querySelectorAll('#card-' + id).forEach(card => {
     card.classList.add('card-read');
     const cdot = card.querySelector('.card-unread-dot');
     if (cdot) { cdot.style.transition='opacity 0.4s'; cdot.style.opacity='0'; setTimeout(()=>cdot.remove(),400); }
   });
-  // Remove from unread pane
+
+  // Animate the card out of the Unread tab, then clean up any empty groups
   document.querySelectorAll('#paneUnread #card-' + id).forEach(c => {
-    c.style.transition='opacity 0.4s, transform 0.4s'; c.style.opacity='0'; c.style.transform='translateX(8px)';
+    c.style.transition='opacity 0.4s, transform 0.4s';
+    c.style.opacity='0';
+    c.style.transform='translateX(8px)';
     setTimeout(()=>{ c.remove(); cleanEmptyPanelGroups('paneUnread'); }, 420);
   });
+
+  // After animations settle, update the read jar strip, stats, and hint
   setTimeout(() => { renderReadJar(); updateStats(); updateNoUnreadHint(); }, 460);
 }
 
-function closeRead() { 
-  document.getElementById('readOverlay').classList.remove('open'); 
-  cancelDeleteLetter();
+function closeRead() {
+  document.getElementById('readOverlay').classList.remove('open');
+  cancelDeleteLetter(); // Reset any pending delete state
   currentReadId = null;
 }
 function handleReadClick(e) { if (e.target === document.getElementById('readOverlay')) closeRead(); }
 
+// Shows the inline delete confirmation inside the read modal
+// (the "Delete this letter?" prompt that appears over the wax seal).
 function promptDeleteLetter() {
   document.getElementById('readDeleteConfirm').classList.add('visible');
 }
 
+// Hides the delete confirmation without deleting.
 function cancelDeleteLetter() {
   const el = document.getElementById('readDeleteConfirm');
   if (el) el.classList.remove('visible');
 }
 
+// Permanently deletes the currently open letter from storage and all UI locations.
 async function confirmDeleteLetter() {
   if (!currentReadId) return;
   const id = currentReadId;
   letters = letters.filter(l => l.id !== id);
-  readIds.delete(id);
+  readIds.delete(id); // Also remove from read history to keep things tidy
   await saveLetters();
   await saveReadIds();
   closeRead();
+
+  // Remove the slip from the jar and the cards from panel tabs
   const slip = document.getElementById('slip-' + id);
   if (slip) slip.remove();
   document.querySelectorAll('#card-' + id).forEach(c => c.remove());
+
   updateStats();
   updateNoUnreadHint();
   renderReadJar();
+
+  // Show empty state if no letters remain
   if (letters.length === 0) {
     const jar = document.getElementById('jarLetters');
     jar.innerHTML = '<div class="empty-hint" id="emptyHint">no letters yet…<br>be the first</div>';
@@ -1758,14 +2308,23 @@ async function confirmDeleteLetter() {
 }
 
 // ═══════════════════════════════════════════
-//  READ JAR MODAL
+//  READ JAR MODAL (full list view)
+//  A scrollable modal showing all letters in the jar
+//  grouped by category, with a filter bar at the top.
+//  Separate from the read letter modal — this is the
+//  "browse all letters" view, not the "read one" view.
 // ═══════════════════════════════════════════
+
+// Builds a full letter card element for the Read Jar list modal.
+// More detailed than the side panel card — includes envelope icon,
+// collapsible body, and heart controls.
 function buildLetterCard(l) {
   const c = l.color || '#c8192a';
   const hearted = heartIds.has(l.id);
   const heartFill = hearted ? '#e05060' : 'none';
   const heartCount = l.hearts > 0 ? l.hearts : '';
   const unreadPip = !isRead(l.id) ? `<span class="rj-unread-pip"></span>` : '';
+
   const card = document.createElement('div');
   card.className = 'rj-letter-card';
   card.id = 'rjcard-' + l.id;
@@ -1803,25 +2362,49 @@ function buildLetterCard(l) {
   return card;
 }
 
-function renderRjCatBar(categories) {
+// Renders the category filter pill bar at the top of the Read Jar modal.
+// Shows: All | ...named categories... | Uncategorised (if applicable).
+// Highlights the currently active filter. Re-renders itself on each click
+// to update which pill appears active.
+function renderRjCatBar(categories, hasUncategorised) {
   const bar = document.getElementById('rjCatBar');
   bar.innerHTML = '';
-  if (categories.length < 2) { bar.style.display = 'none'; return; }
+
+  // Hide the bar entirely if there's nothing to filter by
+  const totalFilters = categories.length + (hasUncategorised ? 1 : 0);
+  if (totalFilters < 1) { bar.style.display = 'none'; return; }
   bar.style.display = 'flex';
+
+  // "All" pill — resets filter to show every letter grouped
   const allBtn = document.createElement('button');
   allBtn.className = 'rj-cat-filter' + (rjActiveFilter === 'all' ? ' active' : '');
   allBtn.textContent = 'All';
-  allBtn.onclick = () => { rjActiveFilter = 'all'; renderRjList(); };
+  allBtn.onclick = () => { rjActiveFilter = 'all'; renderRjList(); renderRjCatBar(categories, hasUncategorised); };
   bar.appendChild(allBtn);
+
+  // One pill per named category
   categories.forEach(cat => {
     const btn = document.createElement('button');
     btn.className = 'rj-cat-filter' + (rjActiveFilter === cat ? ' active' : '');
     btn.textContent = cat;
-    btn.onclick = () => { rjActiveFilter = cat; renderRjList(); };
+    btn.onclick = () => { rjActiveFilter = cat; renderRjList(); renderRjCatBar(categories, hasUncategorised); };
     bar.appendChild(btn);
   });
+
+  // "Uncategorised" pill — shown only when some letters have no category
+  // Uses the special '__none__' sentinel value as the filter key
+  if (hasUncategorised) {
+    const btn = document.createElement('button');
+    btn.className = 'rj-cat-filter' + (rjActiveFilter === '__none__' ? ' active' : '');
+    btn.textContent = 'Uncategorised';
+    btn.onclick = () => { rjActiveFilter = '__none__'; renderRjList(); renderRjCatBar(categories, hasUncategorised); };
+    bar.appendChild(btn);
+  }
 }
 
+// Renders the letter list inside the Read Jar modal, respecting the active filter.
+// When showing "All", letters are grouped by category with collapsible section headers.
+// When a specific category is active, letters are shown in a flat list.
 function renderRjList() {
   const list = document.getElementById('rjModalList');
   list.innerHTML = '';
@@ -1833,8 +2416,11 @@ function renderRjList() {
     return aRead - bRead || b.ts - a.ts;
   });
 
-  // Filter by active category
-  const filtered = rjActiveFilter === 'all' ? sorted : sorted.filter(l => l.category === rjActiveFilter);
+  // Apply the active category filter:
+  // 'all' → no filter, '__none__' → only uncategorised, anything else → exact match
+  const filtered = rjActiveFilter === 'all' ? sorted
+    : rjActiveFilter === '__none__' ? sorted.filter(l => !l.category)
+    : sorted.filter(l => l.category === rjActiveFilter);
 
   if (!filtered.length) {
     list.innerHTML = '<p class="rj-empty">No letters in this category yet ✦</p>';
@@ -1842,20 +2428,21 @@ function renderRjList() {
   }
 
   if (rjActiveFilter !== 'all') {
-    // No grouping needed — just render cards flat
+    // Specific filter active — render flat with no group headers needed
     filtered.forEach(l => list.appendChild(buildLetterCard(l)));
     return;
   }
 
-  // Group by category
-  const groups = new Map(); // category label → letters[]
+  // "All" view: group letters by category into collapsible sections.
+  // Letters without a category are labelled '✦ Uncategorised' and placed last.
+  const groups = new Map();
   filtered.forEach(l => {
     const key = l.category || '✦ Uncategorised';
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(l);
   });
 
-  // Put uncategorised last
+  // Sort group order: named categories alphabetically, uncategorised always last
   const sortedGroups = [...groups.entries()].sort(([a], [b]) => {
     if (a === '✦ Uncategorised') return 1;
     if (b === '✦ Uncategorised') return -1;
@@ -1865,6 +2452,7 @@ function renderRjList() {
   sortedGroups.forEach(([groupName, groupLetters]) => {
     const group = document.createElement('div');
     group.className = 'rj-group';
+
     const header = document.createElement('div');
     header.className = 'rj-group-header';
     header.innerHTML = `
@@ -1873,15 +2461,19 @@ function renderRjList() {
       <span class="rj-group-line"></span>
       <span class="rj-group-chevron">▼</span>`;
     header.onclick = () => group.classList.toggle('collapsed');
+
     const body = document.createElement('div');
     body.className = 'rj-group-body';
     groupLetters.forEach(l => body.appendChild(buildLetterCard(l)));
+
     group.appendChild(header);
     group.appendChild(body);
     list.appendChild(group);
   });
 }
 
+// Opens the Read Jar modal and renders the letter list with category filter bar.
+// Resets the active filter to 'All' every time the modal opens.
 function openReadJarModal() {
   rjActiveFilter = 'all';
   const list = document.getElementById('rjModalList');
@@ -1894,18 +2486,21 @@ function openReadJarModal() {
     return;
   }
 
-  // Collect all used categories (exclude uncategorised from filter bar)
+  // Build the set of named categories and detect if any letters are uncategorised
   const usedCats = [...new Set(letters.map(l => l.category).filter(Boolean))].sort();
-  renderRjCatBar(usedCats);
+  const hasUncategorised = letters.some(l => !l.category);
+  renderRjCatBar(usedCats, hasUncategorised);
   renderRjList();
   document.getElementById('rjOverlay').classList.add('open');
 }
 
+// Toggles a letter card open (expanded body) or closed.
+// Only one card can be open at a time — clicking another closes the current one.
+// Also marks the letter as read the first time it's expanded.
 function toggleRjCard(id) {
   const card = document.getElementById('rjcard-' + id);
   if (!card) return;
   const isOpen = card.classList.contains('open');
-  // Close all others
   document.querySelectorAll('.rj-letter-card.open').forEach(c => c.classList.remove('open'));
   if (!isOpen) {
     card.classList.add('open');
@@ -1913,19 +2508,23 @@ function toggleRjCard(id) {
   }
 }
 
+// Refreshes the heart button state inside a Read Jar list card
+// after a heart toggle, without rebuilding the whole card.
 function refreshRjCard(id) {
   const letter = letters.find(l => l.id === id);
   if (!letter) return;
   const hearted = heartIds.has(id);
   const heartFill = hearted ? '#e05060' : 'none';
   const count = letter.hearts > 0 ? letter.hearts : '';
-  // Update inline heart in header
+
+  // Update the inline heart count shown in the card header
   const card = document.getElementById('rjcard-' + id);
   if (!card) return;
   const inline = card.querySelector('.rj-heart-inline');
   if (inline) {
     inline.innerHTML = `<svg viewBox="0 0 16 16" fill="${heartFill}" xmlns="http://www.w3.org/2000/svg"><path d="M8 13.5s-6-3.8-6-8a4 4 0 0 1 6-3.46A4 4 0 0 1 14 5.5c0 4.2-6 8-6 8z" stroke="#e05060" stroke-width="1.2" stroke-linejoin="round"/></svg>${count}`;
   }
+  // Update the heart button in the expanded card body
   const btn = card.querySelector('.rj-heart-btn');
   if (btn) {
     btn.classList.toggle('hearted', hearted);
@@ -1933,11 +2532,13 @@ function refreshRjCard(id) {
     btn.querySelector('span').textContent = (count ? count + ' ' : '') + 'heart';
   }
 }
+
 function closeRjModal() { document.getElementById('rjOverlay').classList.remove('open'); }
 function handleRjClick(e) { if (e.target === document.getElementById('rjOverlay')) closeRjModal(); }
 
 // ═══════════════════════════════════════════
 //  TABS
+//  Simple tab switcher for the side panel (All / Unread).
 // ═══════════════════════════════════════════
 function switchTab(tab) {
   document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
@@ -1948,24 +2549,47 @@ function switchTab(tab) {
 
 // ═══════════════════════════════════════════
 //  UTILS
+//  Small helper functions used throughout the codebase.
 // ═══════════════════════════════════════════
+
+// Returns true if the given letter ID is in the user's read set.
 function isRead(id) { return readIds.has(id); }
+
+// Generates a unique ID with a readable prefix (e.g. "ltr-a3f9z1k8b2").
 function genId(prefix) { return prefix + '-' + Math.random().toString(36).slice(2,9) + Date.now().toString(36); }
+
+// Deterministic pseudo-random number from a string seed.
+// Used so the same letter always gets the same rotation angle in the jar.
 function seededRand(str) { let h=0; for(let i=0;i<str.length;i++) h=(Math.imul(31,h)+str.charCodeAt(i))|0; return (h>>>0)/0xFFFFFFFF; }
+
+// Escapes special HTML characters to prevent XSS when inserting user content into innerHTML.
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+// Shows a brief toast notification at the bottom of the screen.
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
+
+// Smooth-scrolls the page to centre the jar in the viewport.
 function scrollJar() { document.querySelector('.jar-scene').scrollIntoView({behavior:'smooth',block:'center'}); }
 
 // ═══════════════════════════════════════════
 //  STORAGE — Firebase Realtime Database
-//  Shared across all users everywhere.
-//  Personal keys (shared=false) → localStorage
-//  Shared keys  (shared=true)  → Firebase
+//
+//  Architecture: Offline-First
+//  ─────────────────────────────────────────
+//  All writes go to localStorage immediately (instant,
+//  works offline). Firebase is synced asynchronously.
+//  If offline, writes are queued and flushed when the
+//  browser reconnects.
+//
+//  Key namespacing:
+//    shared=true  → Firebase (lj/<encoded-key>) + localStorage cache
+//    shared=false → localStorage only (personal data: read IDs, hearts)
+//
+//  localStorage prefix: 'lj_local:'
 // ═══════════════════════════════════════════
 
 // ┌──────────────────────────────────────────────────────────────┐
@@ -1984,33 +2608,56 @@ const FIREBASE_CONFIG = {
 };
 // ───────────────────────────────────────────────────────────────
 
-const LOCAL_PREFIX = 'lj_local:';
-const SYNC_QUEUE_KEY = LOCAL_PREFIX + '__syncQueue';
+const LOCAL_PREFIX = 'lj_local:';     // Prefix for all localStorage keys
+const SYNC_QUEUE_KEY = LOCAL_PREFIX + '__syncQueue'; // Key storing the offline write queue
+
+// True if Firebase is configured with real values (not placeholder strings)
 const _fbReady = FIREBASE_CONFIG.databaseURL && !FIREBASE_CONFIG.databaseURL.includes('PASTE');
+
+// Base URL for Firebase REST API calls (no SDK required — uses plain fetch)
 const _fbBase  = _fbReady ? FIREBASE_CONFIG.databaseURL.replace(/\/$/, '') : null;
 
 // ── ONLINE STATE ──
+// Tracks whether the browser currently has a network connection.
+// Updated via the native browser online/offline events.
 let _isOnline = navigator.onLine;
 window.addEventListener('online',  () => { _isOnline = true;  updateBanner(); flushSyncQueue(); });
 window.addEventListener('offline', () => { _isOnline = false; updateBanner(); });
 
-// ── ENCODE keys for Firebase paths ──
+// Encodes storage keys for safe use in Firebase REST paths.
+// Firebase paths cannot contain: . $ # [ ] /
 function _enc(key) { return key.replace(/[^a-zA-Z0-9_-]/g, c => '_' + c.charCodeAt(0) + '_'); }
 
-// ── SYNC QUEUE (writes that failed while offline) ──
+// ── SYNC QUEUE ──
+// A persistent queue (stored in localStorage) of writes that couldn't
+// reach Firebase because the user was offline. Flushed automatically
+// when the browser comes back online or on the next page load.
+
+// Reads the current sync queue from localStorage.
 function _getQueue() { try { return JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY) || '[]'); } catch { return []; } }
+
+// Saves the sync queue back to localStorage.
 function _saveQueue(q) { localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(q)); }
+
+// Adds or updates a key in the queue.
+// Deduplicates by key — only the latest value for each key is kept,
+// so rapid writes don't pile up as separate queue entries.
 function _enqueue(key, value) {
-  const q = _getQueue().filter(item => item.key !== key); // deduplicate by key
+  const q = _getQueue().filter(item => item.key !== key);
   q.push({ key, value, ts: Date.now() });
   _saveQueue(q);
 }
 
+// Attempts to push all queued writes to Firebase.
+// Removes successfully synced items from the queue.
+// Called automatically on reconnect and on page load.
 async function flushSyncQueue() {
   if (!_fbReady || !_isOnline) return;
   const q = _getQueue();
   if (!q.length) return;
-  updateBanner('syncing');
+
+  updateBanner('syncing'); // Show "Syncing…" indicator while flushing
+
   let remaining = [];
   for (const item of q) {
     try {
@@ -2019,28 +2666,35 @@ async function flushSyncQueue() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item.value)
       });
-      if (!res.ok) remaining.push(item);
+      if (!res.ok) remaining.push(item); // Keep failed items in queue
     } catch { remaining.push(item); }
   }
+
   _saveQueue(remaining);
+  // Update banner based on whether all items synced or some remain
   updateBanner(remaining.length ? 'offline' : 'live');
 }
 
-// ── BANNER ──
+// ── STATUS BANNER ──
+// Updates the floating "Live · shared with everyone" / "Offline · saved locally"
+// banner at the bottom of the page to reflect the current connection state.
 function updateBanner(forceState) {
   const banner = document.getElementById('sharedBanner');
   if (!banner) return;
+
   let state, label;
   if (forceState) {
-    state = forceState;
+    state = forceState; // Caller explicitly specified a state (e.g. 'syncing')
   } else if (!_fbReady) {
     state = 'local'; label = 'Local only · Firebase not configured';
   } else if (!_isOnline) {
     state = 'offline';
   } else {
+    // Check if there are unsynced writes pending
     const pending = _getQueue().length;
     state = pending ? 'syncing' : 'live';
   }
+
   const labels = {
     live:    'Live · shared with everyone',
     offline: 'Offline · saved locally',
@@ -2051,68 +2705,83 @@ function updateBanner(forceState) {
   banner.innerHTML = `<span class="shared-dot"></span>${labels[state]}`;
 }
 
-// ── OFFLINE-FIRST STORAGE ──
-// shared=true keys: write local immediately, sync to Firebase in background.
-// shared=false keys: localStorage only (personal data like read/heart IDs).
+// ── OFFLINE-FIRST STORAGE API ──
+// Wraps localStorage and Firebase into a unified storage interface.
+// All callers use: storage.get(key, shared?), storage.set(key, value, shared?), storage.delete(key, shared?)
+//
+// shared=true  → writes to localStorage immediately, syncs to Firebase async
+// shared=false → localStorage only (private per-browser data)
 const storage = window.storage || {
+
+  // Reads a value. For shared keys, tries Firebase first (and updates local cache).
+  // Falls back to localStorage if offline or Firebase fails.
   get: async (key, shared) => {
-    // Always read local first for instant response
     const localVal = localStorage.getItem(LOCAL_PREFIX + key);
 
+    // Private keys: localStorage only
     if (!shared) {
       return localVal !== null ? { key, value: localVal } : null;
     }
 
-    // For shared keys: if online, try Firebase and update local cache
+    // Shared keys: attempt live Firebase read first for freshest data
     if (_fbReady && _isOnline) {
       try {
         const res = await fetch(`${_fbBase}/lj/${_enc(key)}.json`);
         if (res.ok) {
           const data = await res.json();
           if (data !== null) {
+            // Firebase may return a raw string (our stored JSON) or a parsed object
+            // (from older data formats). Normalise to a JSON string either way.
             const val = typeof data === 'string' ? data : JSON.stringify(data);
-            localStorage.setItem(LOCAL_PREFIX + key, val); // update cache
+            // Validate before caching — guard against malformed data
+            try { JSON.parse(val); } catch { return localVal !== null ? { key, value: localVal } : null; }
+            localStorage.setItem(LOCAL_PREFIX + key, val); // Update local cache
             return { key, value: val, shared: true };
           }
         }
       } catch {}
-      // Firebase failed — fall through to local cache
+      // Firebase request failed — fall through to local cache
     }
 
-    // Offline or Firebase unavailable: return local cache
+    // Offline or Firebase unavailable: serve from local cache
     return localVal !== null ? { key, value: localVal } : null;
   },
 
+  // Writes a value. Always writes to localStorage first (instant).
+  // Then attempts Firebase sync; queues for later if offline.
   set: async (key, value, shared) => {
-    // Always write to localStorage immediately
+    // Immediate local write — ensures the app stays responsive offline
     localStorage.setItem(LOCAL_PREFIX + key, value);
 
-    if (!shared) return { key, value };
+    if (!shared) return { key, value }; // Private key: done
 
-    // Try to sync to Firebase
     if (_fbReady) {
       if (!_isOnline) {
-        // Queue for later
+        // Offline: queue the write for later and update the banner
         _enqueue(key, value);
         updateBanner('offline');
         return { key, value };
       }
       try {
+        // value is already a JSON string — wrap in JSON.stringify so Firebase
+        // stores it as a string literal, which get() can return as-is.
         const res = await fetch(`${_fbBase}/lj/${_enc(key)}.json`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(value)
         });
         if (res.ok) {
-          // Remove from queue if it was there
+          // Success: remove from queue if it was previously queued offline
           _saveQueue(_getQueue().filter(item => item.key !== key));
           updateBanner('live');
           return { key, value, shared: true };
         } else {
+          // Firebase returned an error: queue for retry
           _enqueue(key, value);
           updateBanner();
         }
       } catch {
+        // Network error during write: treat as offline and queue
         _enqueue(key, value);
         _isOnline = false;
         updateBanner('offline');
@@ -2121,6 +2790,7 @@ const storage = window.storage || {
     return { key, value };
   },
 
+  // Deletes a key from both localStorage and Firebase.
   delete: async (key, shared) => {
     localStorage.removeItem(LOCAL_PREFIX + key);
     if (!shared) return { key, deleted: true };
@@ -2131,31 +2801,39 @@ const storage = window.storage || {
   }
 };
 
-// ── MERGE local letters into Firebase on reconnect ──
-// When we come back online, local letters may have been written while offline.
-// flushSyncQueue handles pushing those writes up.
-
+// ── LIVE POLLING ──
+// Polls Firebase every 5 seconds to pick up new letters and jar changes
+// written by other users. Only runs when online and Firebase is configured.
+// Updates the UI incrementally — only processes adds/removes, not full re-renders.
 function startPolling() {
   if (pollTimer) clearInterval(pollTimer);
   pollTimer = setInterval(async () => {
-    if (!_fbReady || !_isOnline) return;
+    if (!_fbReady || !_isOnline) return; // Skip poll if offline
+
     try {
+      // ── Check for new/deleted letters ──
       const r = await storage.get('letters:' + currentJarId, true);
       const loaded = r ? JSON.parse(r.value) : [];
       const existingIds = new Set(letters.map(l => l.id));
       const loadedIds   = new Set(loaded.map(l => l.id));
-      const hasChanges  = loaded.length !== letters.length || loaded.some(l => !existingIds.has(l.id));
+
+      // Only process changes — don't re-render everything on every poll tick
+      const hasChanges = loaded.length !== letters.length || loaded.some(l => !existingIds.has(l.id));
       if (hasChanges) {
         const prevIds = new Set(letters.map(l => l.id));
         letters = loaded;
+
+        // Add newly arrived letters to the jar and side panel
         for (const l of loaded) {
           if (!prevIds.has(l.id)) {
             const hint = document.getElementById('emptyHint');
             if (hint) hint.remove();
-            addSlipToJar(l, true);
-            addCardToPanel(l, true);
+            addSlipToJar(l, true);      // Animate the new slip dropping in
+            addCardToPanel(l, true);    // Add card to side panel
           }
         }
+
+        // Remove letters that were deleted by another user
         for (const id of prevIds) {
           if (!loadedIds.has(id)) {
             const slip = document.getElementById('slip-' + id);
@@ -2163,35 +2841,49 @@ function startPolling() {
             document.querySelectorAll('#card-' + id).forEach(c => c.remove());
           }
         }
+
+        // Show empty state if all letters are gone
         if (letters.length === 0) {
           document.getElementById('jarLetters').innerHTML =
             '<div class="empty-hint" id="emptyHint">no letters yet…<br>be the first</div>';
         }
         updateStats(); updateNoUnreadHint(); renderReadJar(); renderJarDropdown();
       }
+
+      // ── Check for new/deleted jars ──
       const jr = await storage.get('jars', true);
-      const loadedJars = jr ? JSON.parse(jr.value) : [];
+      let loadedJars = [];
+      try { const parsed = jr ? JSON.parse(jr.value) : []; loadedJars = Array.isArray(parsed) ? parsed : []; } catch {}
+
       const jarChanged = loadedJars.length !== jars.length || loadedJars.some(j => !jars.find(x => x.id === j.id));
       if (jarChanged) {
-        jars = loadedJars; renderJarDropdown(); updateJarContext();
+        jars = loadedJars;
+        renderJarDropdown();
+        updateJarContext();
+        // If the current jar was deleted by another user, switch to the first available
         if (!jars.find(j => j.id === currentJarId) && jars.length > 0) await switchToJar(jars[0].id, false);
       }
-    } catch {}
+    } catch {} // Silently ignore network errors — next poll will retry
   }, 5000);
 }
 
-// Init banner
+// Show the status banner after a short delay (lets the page finish loading first)
 setTimeout(() => { updateBanner(); document.getElementById('sharedBanner').style.opacity = '1'; }, 900);
-// Flush any queued writes from previous sessions
+
+// Flush any writes that were queued during a previous offline session
 setTimeout(() => { if (_isOnline) flushSyncQueue(); }, 2000);
 
+// Close any open modal/dropdown when the user presses Escape
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeModal(); closeRead(); closeRjModal(); closeCreateJar(); closeDeleteJar(); closeFeedback(); closeJarDropdown(); }
+  if (e.key === 'Escape') { closeModal(); closeRead(); closeRjModal(); closeCreateJar(); closeDeleteJar(); closeFeedback(); closeFeedbackViewer(); closeJarDropdown(); }
 });
 
+// Kick off the app
 init().then(() => {
-  // Re-sync badge after Firebase may have finished loading
+  // Re-sync the letter count badge after Firebase may have finished loading
   setTimeout(() => { if (typeof updateStats === 'function') updateStats(); }, 1500);
+  // Update the feedback count badge in the nav
+  setTimeout(() => updateFbNavBadge(), 1800);
 });
 </script>
 </body>
