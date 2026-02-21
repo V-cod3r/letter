@@ -158,6 +158,10 @@
   .shared-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
   .shared-banner.live .shared-dot { background: #40c060; box-shadow: 0 0 6px rgba(60,200,80,0.7); animation: pulse-dot 1.8s ease-in-out infinite; }
   .shared-banner.local .shared-dot { background: #c8a040; }
+  .shared-banner.offline { background: rgba(30,15,5,0.88); border: 1px solid rgba(180,80,40,0.4); color: rgba(220,130,80,0.85); }
+  .shared-banner.syncing { background: rgba(10,20,35,0.88); border: 1px solid rgba(60,120,200,0.35); color: rgba(100,160,230,0.8); }
+  .shared-banner.offline .shared-dot { background: #d06030; box-shadow: 0 0 6px rgba(200,80,30,0.6); }
+  .shared-banner.syncing .shared-dot { background: #4090d0; box-shadow: 0 0 6px rgba(60,130,210,0.6); animation: pulse-dot 0.9s ease-in-out infinite; }
   .unread-dot { position: absolute; top: 3px; right: 3px; width: 5px; height: 5px; border-radius: 50%; background: var(--crimson-bright); box-shadow: 0 0 4px rgba(180,140,70,0.9); animation: pulse-dot 1.8s ease-in-out infinite; }
   @keyframes pulse-dot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.6; } }
 
@@ -1981,55 +1985,160 @@ const FIREBASE_CONFIG = {
 // ───────────────────────────────────────────────────────────────
 
 const LOCAL_PREFIX = 'lj_local:';
+const SYNC_QUEUE_KEY = LOCAL_PREFIX + '__syncQueue';
 const _fbReady = FIREBASE_CONFIG.databaseURL && !FIREBASE_CONFIG.databaseURL.includes('PASTE');
+const _fbBase  = _fbReady ? FIREBASE_CONFIG.databaseURL.replace(/\/$/, '') : null;
 
-// Firebase REST base URL  (no SDK needed — just fetch)
-const _fbBase = _fbReady ? FIREBASE_CONFIG.databaseURL.replace(/\/$/, '') : null;
-const _fbKey  = _fbReady ? FIREBASE_CONFIG.apiKey : null;
+// ── ONLINE STATE ──
+let _isOnline = navigator.onLine;
+window.addEventListener('online',  () => { _isOnline = true;  updateBanner(); flushSyncQueue(); });
+window.addEventListener('offline', () => { _isOnline = false; updateBanner(); });
 
-// Encode keys: Firebase paths can't have . $ # [ ] /
+// ── ENCODE keys for Firebase paths ──
 function _enc(key) { return key.replace(/[^a-zA-Z0-9_-]/g, c => '_' + c.charCodeAt(0) + '_'); }
 
-const storage = window.storage || {
-  get: async (key, shared) => {
-    if (!shared) {
-      const val = localStorage.getItem(LOCAL_PREFIX + key);
-      return val !== null ? { key, value: val } : null;
-    }
-    if (!_fbReady) return null;
+// ── SYNC QUEUE (writes that failed while offline) ──
+function _getQueue() { try { return JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY) || '[]'); } catch { return []; } }
+function _saveQueue(q) { localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(q)); }
+function _enqueue(key, value) {
+  const q = _getQueue().filter(item => item.key !== key); // deduplicate by key
+  q.push({ key, value, ts: Date.now() });
+  _saveQueue(q);
+}
+
+async function flushSyncQueue() {
+  if (!_fbReady || !_isOnline) return;
+  const q = _getQueue();
+  if (!q.length) return;
+  updateBanner('syncing');
+  let remaining = [];
+  for (const item of q) {
     try {
-      const res = await fetch(`${_fbBase}/lj/${_enc(key)}.json`);
-      if (!res.ok) return null;
-      const data = await res.json();
-      if (data === null) return null;
-      return { key, value: typeof data === 'string' ? data : JSON.stringify(data), shared: true };
-    } catch { return null; }
-  },
-  set: async (key, value, shared) => {
-    if (!shared) { localStorage.setItem(LOCAL_PREFIX + key, value); return { key, value }; }
-    if (!_fbReady) return null;
-    try {
-      const res = await fetch(`${_fbBase}/lj/${_enc(key)}.json`, {
+      const res = await fetch(`${_fbBase}/lj/${_enc(item.key)}.json`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(value)
+        body: JSON.stringify(item.value)
       });
-      return res.ok ? { key, value, shared: true } : null;
-    } catch { return null; }
+      if (!res.ok) remaining.push(item);
+    } catch { remaining.push(item); }
+  }
+  _saveQueue(remaining);
+  updateBanner(remaining.length ? 'offline' : 'live');
+}
+
+// ── BANNER ──
+function updateBanner(forceState) {
+  const banner = document.getElementById('sharedBanner');
+  if (!banner) return;
+  let state, label;
+  if (forceState) {
+    state = forceState;
+  } else if (!_fbReady) {
+    state = 'local'; label = 'Local only · Firebase not configured';
+  } else if (!_isOnline) {
+    state = 'offline';
+  } else {
+    const pending = _getQueue().length;
+    state = pending ? 'syncing' : 'live';
+  }
+  const labels = {
+    live:    'Live · shared with everyone',
+    offline: 'Offline · saved locally',
+    syncing: 'Syncing…',
+    local:   label || 'Local only · Firebase not configured'
+  };
+  banner.className = 'shared-banner ' + state;
+  banner.innerHTML = `<span class="shared-dot"></span>${labels[state]}`;
+}
+
+// ── OFFLINE-FIRST STORAGE ──
+// shared=true keys: write local immediately, sync to Firebase in background.
+// shared=false keys: localStorage only (personal data like read/heart IDs).
+const storage = window.storage || {
+  get: async (key, shared) => {
+    // Always read local first for instant response
+    const localVal = localStorage.getItem(LOCAL_PREFIX + key);
+
+    if (!shared) {
+      return localVal !== null ? { key, value: localVal } : null;
+    }
+
+    // For shared keys: if online, try Firebase and update local cache
+    if (_fbReady && _isOnline) {
+      try {
+        const res = await fetch(`${_fbBase}/lj/${_enc(key)}.json`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data !== null) {
+            const val = typeof data === 'string' ? data : JSON.stringify(data);
+            localStorage.setItem(LOCAL_PREFIX + key, val); // update cache
+            return { key, value: val, shared: true };
+          }
+        }
+      } catch {}
+      // Firebase failed — fall through to local cache
+    }
+
+    // Offline or Firebase unavailable: return local cache
+    return localVal !== null ? { key, value: localVal } : null;
   },
+
+  set: async (key, value, shared) => {
+    // Always write to localStorage immediately
+    localStorage.setItem(LOCAL_PREFIX + key, value);
+
+    if (!shared) return { key, value };
+
+    // Try to sync to Firebase
+    if (_fbReady) {
+      if (!_isOnline) {
+        // Queue for later
+        _enqueue(key, value);
+        updateBanner('offline');
+        return { key, value };
+      }
+      try {
+        const res = await fetch(`${_fbBase}/lj/${_enc(key)}.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(value)
+        });
+        if (res.ok) {
+          // Remove from queue if it was there
+          _saveQueue(_getQueue().filter(item => item.key !== key));
+          updateBanner('live');
+          return { key, value, shared: true };
+        } else {
+          _enqueue(key, value);
+          updateBanner();
+        }
+      } catch {
+        _enqueue(key, value);
+        _isOnline = false;
+        updateBanner('offline');
+      }
+    }
+    return { key, value };
+  },
+
   delete: async (key, shared) => {
-    if (!shared) { localStorage.removeItem(LOCAL_PREFIX + key); return { key, deleted: true }; }
-    if (!_fbReady) return null;
-    try {
-      await fetch(`${_fbBase}/lj/${_enc(key)}.json`, { method: 'DELETE' });
-      return { key, deleted: true, shared: true };
-    } catch { return null; }
+    localStorage.removeItem(LOCAL_PREFIX + key);
+    if (!shared) return { key, deleted: true };
+    if (_fbReady && _isOnline) {
+      try { await fetch(`${_fbBase}/lj/${_enc(key)}.json`, { method: 'DELETE' }); } catch {}
+    }
+    return { key, deleted: true };
   }
 };
+
+// ── MERGE local letters into Firebase on reconnect ──
+// When we come back online, local letters may have been written while offline.
+// flushSyncQueue handles pushing those writes up.
 
 function startPolling() {
   if (pollTimer) clearInterval(pollTimer);
   pollTimer = setInterval(async () => {
+    if (!_fbReady || !_isOnline) return;
     try {
       const r = await storage.get('letters:' + currentJarId, true);
       const loaded = r ? JSON.parse(r.value) : [];
@@ -2071,15 +2180,10 @@ function startPolling() {
   }, 5000);
 }
 
-// Status banner
-(function() {
-  const banner = document.getElementById('sharedBanner');
-  banner.className = 'shared-banner ' + (_fbReady ? 'live' : 'local');
-  banner.innerHTML = _fbReady
-    ? '<span class="shared-dot"></span>Live · shared with everyone'
-    : '<span class="shared-dot"></span>Setup needed · paste your Firebase config';
-  setTimeout(() => { banner.style.opacity = '1'; }, 900);
-})();
+// Init banner
+setTimeout(() => { updateBanner(); document.getElementById('sharedBanner').style.opacity = '1'; }, 900);
+// Flush any queued writes from previous sessions
+setTimeout(() => { if (_isOnline) flushSyncQueue(); }, 2000);
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeModal(); closeRead(); closeRjModal(); closeCreateJar(); closeDeleteJar(); closeFeedback(); closeJarDropdown(); }
