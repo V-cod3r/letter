@@ -1014,6 +1014,10 @@ function addSlipToJar(letter, animate) {
   }
   slip.addEventListener('click', () => openRead(letter.id));
   container.appendChild(slip);
+
+  // Keep badge in sync with jar contents
+  const badge = document.getElementById('letterBadge');
+  if (badge) badge.textContent = container.querySelectorAll('.letter-slip').length;
 }
 
 function addCardToPanel(letter, prepend) {
@@ -1070,9 +1074,11 @@ function renderReadJar() {
 
 function updateStats() {
   const n = letters.length;
-  const badge = document.getElementById('letterBadge');
-  badge.textContent = n;
   const unc = letters.filter(l => !isRead(l.id)).length;
+  const badge = document.getElementById('letterBadge');
+  // Fallback: count slips in jar DOM in case letters array is momentarily stale
+  const domCount = document.querySelectorAll('#jarLetters .letter-slip').length;
+  badge.textContent = Math.max(n, domCount);
   ['unreadBadge','unreadBadge2'].forEach(id => {
     const el = document.getElementById(id);
     el.textContent = unc;
@@ -1526,7 +1532,10 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeModal(); closeRead(); closeRjModal(); closeCreateJar(); closeDeleteJar(); closeJarDropdown(); }
 });
 
-init();
+init().then(() => {
+  // Re-sync badge after Firebase may have finished loading
+  setTimeout(() => { if (typeof updateStats === 'function') updateStats(); }, 1500);
+});
 </script>
 </body>
 </html>
