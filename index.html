@@ -190,6 +190,23 @@
   .tab-pane::-webkit-scrollbar { width: 3px; }
   .tab-pane::-webkit-scrollbar-thumb { background: rgba(180,140,70,0.3); border-radius: 2px; }
 
+  /* panel category groups */
+  .panel-group { display: flex; flex-direction: column; gap: 8px; }
+  .panel-group-header {
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer; user-select: none; padding: 2px 0 4px;
+  }
+  .panel-group-title {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 0.78rem; color: rgba(200,160,80,0.65); letter-spacing: 0.06em; white-space: nowrap;
+  }
+  .panel-group-line { flex: 1; height: 1px; background: rgba(160,120,60,0.2); }
+  .panel-group-count { font-size: 0.68rem; color: rgba(245,235,210,0.22); }
+  .panel-group-chevron { font-size: 0.55rem; color: rgba(200,160,80,0.45); transition: transform 0.22s; }
+  .panel-group.collapsed .panel-group-chevron { transform: rotate(-90deg); }
+  .panel-group-body { display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+  .panel-group.collapsed .panel-group-body { display: none; }
+
   .recent-card { background: rgba(35,22,8,0.6); border: 1px solid rgba(150,110,50,0.22); border-radius: 3px; padding: 15px 18px; backdrop-filter: blur(6px); cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; flex-shrink: 0; }
   .recent-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--env-color, var(--crimson)); }
   .recent-card:hover { border-color: rgba(180,140,70,0.4); background: rgba(45,28,10,0.7); transform: translateX(4px); }
@@ -218,6 +235,56 @@
   .modal-title { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 400; font-style: italic; color: var(--cream); margin-bottom: 6px; }
   .modal-sub { font-style: italic; font-size: 1rem; color: rgba(245,232,224,0.38); margin-bottom: 10px; }
   .divider { width: 36px; height: 1px; background: var(--crimson); margin: 16px 0 28px; }
+
+  /* ── CATEGORY PICKER ── */
+  .cat-row { margin-bottom: 20px; }
+  .cat-label {
+    font-size: 0.76rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(245,232,224,0.38); display: flex; align-items: center; gap: 8px;
+    margin-bottom: 0; cursor: pointer; user-select: none;
+    transition: color 0.2s;
+  }
+  .cat-label:hover { color: rgba(245,232,224,0.6); }
+  .cat-label-chevron { font-size: 0.55rem; color: rgba(200,160,80,0.45); transition: transform 0.25s; margin-left: 2px; }
+  .cat-row.open .cat-label-chevron { transform: rotate(180deg); }
+  .cat-row.open .cat-label { color: rgba(245,232,224,0.55); margin-bottom: 10px; }
+  .cat-collapsible { display: none; }
+  .cat-row.open .cat-collapsible { display: block; }
+  .cat-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 8px; }
+  .cat-tag {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(160,120,60,0.3);
+    border-radius: 20px; padding: 5px 13px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.88rem;
+    color: rgba(245,235,210,0.5); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cat-tag:hover { border-color: rgba(180,140,70,0.55); color: var(--cream); background: rgba(255,255,255,0.07); }
+  .cat-tag.selected { background: rgba(180,140,70,0.18); border-color: rgba(180,140,70,0.7); color: var(--gold-light); }
+  .cat-new-wrap { display: flex; gap: 8px; align-items: center; margin-top: 4px; }
+  .cat-new-input {
+    flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(160,120,60,0.25);
+    border-radius: 20px; padding: 6px 14px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.88rem;
+    color: var(--cream); outline: none; transition: border-color 0.2s;
+    margin-bottom: 0;
+  }
+  .cat-new-input::placeholder { color: rgba(245,235,210,0.18); }
+  .cat-new-input:focus { border-color: rgba(180,140,70,0.5); }
+  .cat-add-btn {
+    background: none; border: 1px dashed rgba(180,140,70,0.38);
+    border-radius: 20px; padding: 5px 14px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.85rem;
+    color: rgba(180,140,70,0.7); cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .cat-add-btn:hover { border-color: rgba(180,140,70,0.65); color: var(--rose-light); background: rgba(180,140,70,0.08); }
+
+  /* category badge in read views */
+  .cat-badge {
+    display: inline-block; border: 1px solid rgba(180,140,70,0.38);
+    border-radius: 20px; padding: 2px 11px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.82rem;
+    color: rgba(200,160,80,0.75); margin-bottom: 10px;
+  }
   label { display: block; font-size: 0.76rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(245,235,210,0.38); margin-bottom: 8px; }
   input[type="text"], textarea { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(160,120,60,0.3); border-radius: 2px; padding: 12px 16px; font-family: 'Caveat', cursive; font-size: 1.15rem; color: var(--cream); outline: none; resize: none; transition: border-color 0.2s, box-shadow 0.2s; margin-bottom: 20px; }
   input[type="text"]::placeholder, textarea::placeholder { color: rgba(245,235,210,0.18); }
@@ -269,6 +336,34 @@
   .rj-scroll-area { overflow-y: auto; flex: 1; padding: 24px 36px 32px; }
   .rj-scroll-area::-webkit-scrollbar { width: 3px; }
   .rj-scroll-area::-webkit-scrollbar-thumb { background: rgba(180,140,70,0.32); border-radius: 2px; }
+
+  /* category filter bar */
+  .rj-cat-bar { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 36px 0; flex-shrink: 0; }
+  .rj-cat-filter {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(160,120,60,0.28);
+    border-radius: 20px; padding: 4px 13px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.83rem;
+    color: rgba(245,235,210,0.45); cursor: pointer; transition: all 0.18s;
+  }
+  .rj-cat-filter:hover { border-color: rgba(180,140,70,0.5); color: var(--cream); }
+  .rj-cat-filter.active { background: rgba(180,140,70,0.18); border-color: rgba(180,140,70,0.65); color: var(--gold-light); }
+
+  /* category group header */
+  .rj-group { margin-bottom: 28px; }
+  .rj-group-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 12px; cursor: pointer; user-select: none;
+  }
+  .rj-group-title {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 0.95rem; color: rgba(200,160,80,0.75); letter-spacing: 0.06em;
+  }
+  .rj-group-line { flex: 1; height: 1px; background: rgba(160,120,60,0.22); }
+  .rj-group-count { font-size: 0.72rem; color: rgba(245,235,210,0.25); }
+  .rj-group-chevron { font-size: 0.6rem; color: rgba(200,160,80,0.5); transition: transform 0.25s; }
+  .rj-group.collapsed .rj-group-chevron { transform: rotate(-90deg); }
+  .rj-group-body { overflow: hidden; }
+  .rj-group.collapsed .rj-group-body { display: none; }
   .rj-letter-card { border: 1px solid rgba(150,110,50,0.18); border-radius: 4px; margin-bottom: 16px; background: rgba(30,18,6,0.7); overflow: hidden; transition: border-color 0.25s; }
   .rj-letter-card:hover { border-color: rgba(180,140,70,0.35); }
   .rj-letter-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px 12px; cursor: pointer; position: relative; }
@@ -301,7 +396,7 @@
   .toast { position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--crimson); color: var(--cream); padding: 12px 28px; border-radius: 2px; font-style: italic; font-size: 1.05rem; box-shadow: 0 6px 30px rgba(0,0,0,0.55), 0 0 20px rgba(110,65,15,0.4); opacity: 0; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); z-index: 400; pointer-events: none; border: 1px solid rgba(180,140,70,0.4); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  footer { position: relative; z-index: 10; text-align: center; padding: 18px; border-top: 1px solid rgba(160,120,60,0.15); font-style: italic; font-size: 0.82rem; color: rgba(245,235,210,0.18); }
+  footer { position: relative; z-index: 10; text-align: center; padding: 18px 18px 58px; border-top: 1px solid rgba(160,120,60,0.15); font-style: italic; font-size: 0.82rem; color: rgba(245,235,210,0.18); }
 </style>
 </head>
 <body>
@@ -821,6 +916,16 @@
     </div>
     <label for="fromField">From</label>
     <input type="text" id="fromField" placeholder="Your name, or stay a mystery…" maxlength="60"/>
+    <div class="cat-row" id="catRow">
+      <span class="cat-label" onclick="toggleCatRow()">Category <span style="opacity:0.4;font-style:italic;font-size:0.82rem;text-transform:none;letter-spacing:0;">(optional)</span><span class="cat-label-chevron">▼</span></span>
+      <div class="cat-collapsible">
+        <div class="cat-tags" id="catTags"></div>
+        <div class="cat-new-wrap">
+          <input class="cat-new-input" id="catNewInput" placeholder="or type a new one…" maxlength="30" onkeydown="catInputKey(event)"/>
+          <button class="cat-add-btn" onclick="catAddNew()">+ add</button>
+        </div>
+      </div>
+    </div>
     <label for="letterBody">Your letter</label>
     <textarea id="letterBody" rows="6" placeholder="Write whatever your heart holds…"></textarea>
     <div class="modal-actions">
@@ -882,6 +987,7 @@
     <button class="read-close" onclick="closeRead()">×</button>
     <div class="read-env-stripe" id="readEnvStripe"></div>
     <div class="read-from" id="readFrom"></div>
+    <div id="readCategory" style="padding: 0 32px 0; display:none;"><span class="cat-badge" id="readCategoryBadge"></span></div>
     <div class="read-divider"></div>
     <div class="read-body" id="readBody"></div>
     <!-- Heart button (bottom left) -->
@@ -920,6 +1026,7 @@
       <div class="rj-modal-title">Letters in the Jar</div>
       <p class="rj-modal-sub">Click any letter to read it ✦</p>
     </div>
+    <div class="rj-cat-bar" id="rjCatBar"></div>
     <div class="rj-scroll-area" id="rjModalList"></div>
   </div>
 </div>
@@ -938,8 +1045,10 @@ let readIds = new Set(); // letter IDs read in currentJar this session
 let heartIds = new Set(); // letter IDs hearted by this session (personal)
 let sessionId = '';
 let selectedColor = '#c8192a';
+let selectedCategory = '';
 let pendingDeleteJarId = null;
 let pollTimer = null;
+let rjActiveFilter = 'all';
 
 // ═══════════════════════════════════════════
 //  INIT
@@ -1095,8 +1204,8 @@ function renderAll(animate) {
 
   letters.forEach(l => {
     addSlipToJar(l, animate === true);
-    addCardToPanel(l, false);
   });
+  renderPanelGroups();
 
   renderReadJar();
   updateStats();
@@ -1137,21 +1246,79 @@ function addSlipToJar(letter, animate) {
   if (badge) badge.textContent = container.querySelectorAll('.letter-slip').length;
 }
 
-function addCardToPanel(letter, prepend) {
+function renderPanelGroups() {
   const allPane = document.getElementById('paneAll');
   const unreadPane = document.getElementById('paneUnread');
-  const h = document.getElementById('noLettersHint');
-  if (h) h.remove();
+  allPane.innerHTML = '';
+  unreadPane.innerHTML = '';
 
-  const card = makeCard(letter);
-  if (prepend) allPane.insertBefore(card, allPane.firstChild);
-  else allPane.appendChild(card);
+  if (!letters.length) return;
 
-  if (!isRead(letter.id)) {
-    const uc = makeCard(letter);
-    if (prepend) unreadPane.insertBefore(uc, unreadPane.firstChild);
-    else unreadPane.appendChild(uc);
+  // Sort: unread first, then newest
+  const sorted = [...letters].sort((a,b) => {
+    const aRead = isRead(a.id) ? 1 : 0;
+    const bRead = isRead(b.id) ? 1 : 0;
+    return aRead - bRead || b.ts - a.ts;
+  });
+
+  function buildGroups(list) {
+    const groups = new Map();
+    list.forEach(l => {
+      const key = l.category || '✦ Uncategorised';
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(l);
+    });
+    return [...groups.entries()].sort(([a],[b]) => {
+      if (a === '✦ Uncategorised') return 1;
+      if (b === '✦ Uncategorised') return -1;
+      return a.localeCompare(b);
+    });
   }
+
+  function appendGroupsToPane(pane, list) {
+    if (!list.length) return;
+    const groups = buildGroups(list);
+    // If only one group and it's uncategorised, render flat (no header clutter)
+    if (groups.length === 1 && groups[0][0] === '✦ Uncategorised') {
+      groups[0][1].forEach(l => pane.appendChild(makeCard(l)));
+      return;
+    }
+    groups.forEach(([groupName, groupLetters]) => {
+      const group = document.createElement('div');
+      group.className = 'panel-group';
+      const header = document.createElement('div');
+      header.className = 'panel-group-header';
+      header.innerHTML = `
+        <span class="panel-group-title">${escHtml(groupName)}</span>
+        <span class="panel-group-count">${groupLetters.length}</span>
+        <span class="panel-group-line"></span>
+        <span class="panel-group-chevron">▼</span>`;
+      header.onclick = () => group.classList.toggle('collapsed');
+      const body = document.createElement('div');
+      body.className = 'panel-group-body';
+      groupLetters.forEach(l => body.appendChild(makeCard(l)));
+      group.appendChild(header);
+      group.appendChild(body);
+      pane.appendChild(group);
+    });
+  }
+
+  appendGroupsToPane(allPane, sorted);
+  appendGroupsToPane(unreadPane, sorted.filter(l => !isRead(l.id)));
+}
+
+function addCardToPanel(letter, prepend) {
+  // Just re-render groups — prepend is handled by sort order
+  renderPanelGroups();
+  updateNoUnreadHint();
+}
+
+function cleanEmptyPanelGroups(paneId) {
+  const pane = document.getElementById(paneId);
+  if (!pane) return;
+  pane.querySelectorAll('.panel-group').forEach(group => {
+    if (!group.querySelector('.recent-card')) group.remove();
+  });
 }
 
 function makeCard(letter) {
@@ -1385,18 +1552,80 @@ async function confirmDeleteJar() {
 
 // ═══════════════════════════════════════════
 //  WRITE + SUBMIT
+function toggleCatRow() {
+  document.getElementById('catRow').classList.toggle('open');
+}
+
+// ── CATEGORY HELPERS ──
+const DEFAULT_CATS = ['Love', 'Gratitude', 'Hope', 'Confession', 'Memory', 'Dream', 'Apology', 'Joy'];
+
+function getUsedCategories() {
+  const used = new Set(letters.map(l => l.category).filter(Boolean));
+  return [...new Set([...DEFAULT_CATS, ...used])];
+}
+
+function renderCatTags() {
+  const wrap = document.getElementById('catTags');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  getUsedCategories().forEach(cat => {
+    const t = document.createElement('button');
+    t.className = 'cat-tag' + (selectedCategory === cat ? ' selected' : '');
+    t.textContent = cat;
+    t.onclick = () => {
+      selectedCategory = selectedCategory === cat ? '' : cat;
+      renderCatTags();
+    };
+    wrap.appendChild(t);
+  });
+  // Show selected value on the label when collapsed
+  const label = document.querySelector('#catRow .cat-label');
+  if (label) {
+    const existing = label.querySelector('.cat-selected-preview');
+    if (existing) existing.remove();
+    if (selectedCategory) {
+      const preview = document.createElement('span');
+      preview.className = 'cat-selected-preview';
+      preview.textContent = selectedCategory;
+      preview.style.cssText = 'font-family:Cormorant Garamond,serif;font-style:italic;font-size:0.85rem;color:rgba(200,160,80,0.8);text-transform:none;letter-spacing:0;margin-left:6px;';
+      const chevron = label.querySelector('.cat-label-chevron');
+      label.insertBefore(preview, chevron);
+    }
+  }
+}
+
+function catAddNew() {
+  const input = document.getElementById('catNewInput');
+  const val = input.value.trim();
+  if (!val) return;
+  selectedCategory = val.charAt(0).toUpperCase() + val.slice(1);
+  input.value = '';
+  renderCatTags();
+}
+
+function catInputKey(e) {
+  if (e.key === 'Enter') { e.preventDefault(); catAddNew(); }
+}
+
 // ═══════════════════════════════════════════
 function openModal() {
   document.getElementById('overlay').classList.add('open');
   selectedColor = '#c8192a';
+  selectedCategory = '';
   document.getElementById('colorWheelInput').value = '#c8192a';
   document.getElementById('colorPreview').style.background = '#c8192a';
+  document.getElementById('catNewInput').value = '';
+  document.getElementById('catRow').classList.remove('open');
+  renderCatTags();
   setTimeout(() => document.getElementById('fromField').focus(), 350);
 }
 function closeModal() {
   document.getElementById('overlay').classList.remove('open');
   document.getElementById('fromField').value = '';
   document.getElementById('letterBody').value = '';
+  document.getElementById('catNewInput').value = '';
+  document.getElementById('catRow').classList.remove('open');
+  selectedCategory = '';
 }
 function handleOverlayClick(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
@@ -1411,6 +1640,7 @@ async function submitLetter() {
     return;
   }
   const letter = { id: genId('ltr'), from, body, color: selectedColor, ts: Date.now() };
+  if (selectedCategory) letter.category = selectedCategory;
   letters.push(letter);
   await saveLetters();
 
@@ -1446,6 +1676,11 @@ function openRead(id) {
   if (!letter) return;
   document.getElementById('readFrom').textContent = '— from ' + letter.from;
   document.getElementById('readBody').textContent = letter.body;
+  // Category badge
+  const catWrap = document.getElementById('readCategory');
+  const catBadge = document.getElementById('readCategoryBadge');
+  if (letter.category) { catBadge.textContent = letter.category; catWrap.style.display = ''; }
+  else { catWrap.style.display = 'none'; }
   document.getElementById('readEnvStripe').style.background = letter.color || '#c8192a';
   document.getElementById('readWax').querySelector('circle').setAttribute('fill', (letter.color || '#c8192a') + '80');
   // Heart button state
@@ -1476,7 +1711,7 @@ async function markRead(id) {
   // Remove from unread pane
   document.querySelectorAll('#paneUnread #card-' + id).forEach(c => {
     c.style.transition='opacity 0.4s, transform 0.4s'; c.style.opacity='0'; c.style.transform='translateX(8px)';
-    setTimeout(()=>c.remove(), 420);
+    setTimeout(()=>{ c.remove(); cleanEmptyPanelGroups('paneUnread'); }, 420);
   });
   setTimeout(() => { renderReadJar(); updateStats(); updateNoUnreadHint(); }, 460);
 }
@@ -1521,67 +1756,144 @@ async function confirmDeleteLetter() {
 // ═══════════════════════════════════════════
 //  READ JAR MODAL
 // ═══════════════════════════════════════════
-function openReadJarModal() {
+function buildLetterCard(l) {
+  const c = l.color || '#c8192a';
+  const hearted = heartIds.has(l.id);
+  const heartFill = hearted ? '#e05060' : 'none';
+  const heartCount = l.hearts > 0 ? l.hearts : '';
+  const unreadPip = !isRead(l.id) ? `<span class="rj-unread-pip"></span>` : '';
+  const card = document.createElement('div');
+  card.className = 'rj-letter-card';
+  card.id = 'rjcard-' + l.id;
+  card.style.setProperty('--env-color', c);
+  card.innerHTML = `
+    <div class="rj-letter-header" onclick="toggleRjCard('${l.id}')">
+      <svg class="rj-env-icon" viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="66" height="46" rx="3" fill="${c}" stroke="rgba(255,255,255,0.45)" stroke-width="2"/>
+        <path d="M1,1 L34,26 L67,1" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.4" stroke-linejoin="round"/>
+        <path d="M1,47 L24,28" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        <path d="M67,47 L44,28" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+      </svg>
+      <span class="rj-sender">— ${escHtml(l.from)}</span>
+      ${unreadPip}
+      <span class="rj-heart-inline">
+        <svg viewBox="0 0 16 16" fill="${heartFill}" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 13.5s-6-3.8-6-8a4 4 0 0 1 6-3.46A4 4 0 0 1 14 5.5c0 4.2-6 8-6 8z" stroke="#e05060" stroke-width="1.2" stroke-linejoin="round"/>
+        </svg>
+        ${heartCount}
+      </span>
+      <span class="rj-chevron">▼</span>
+    </div>
+    <div class="rj-letter-body" id="rjbody-${l.id}">
+      <div class="rj-body-divider"></div>
+      <div class="rj-body-text">${escHtml(l.body)}</div>
+      <div class="rj-body-actions">
+        <button class="rj-heart-btn${hearted ? ' hearted' : ''}" data-id="${l.id}" onclick="toggleHeart('${l.id}', event); refreshRjCard('${l.id}')" title="Heart">
+          <svg viewBox="0 0 16 16" fill="${heartFill}" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 13.5s-6-3.8-6-8a4 4 0 0 1 6-3.46A4 4 0 0 1 14 5.5c0 4.2-6 8-6 8z" stroke="#e05060" stroke-width="1.3" stroke-linejoin="round"/>
+          </svg>
+          <span>${heartCount ? heartCount + ' ' : ''}heart</span>
+        </button>
+      </div>
+    </div>`;
+  return card;
+}
+
+function renderRjCatBar(categories) {
+  const bar = document.getElementById('rjCatBar');
+  bar.innerHTML = '';
+  if (categories.length < 2) { bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'rj-cat-filter' + (rjActiveFilter === 'all' ? ' active' : '');
+  allBtn.textContent = 'All';
+  allBtn.onclick = () => { rjActiveFilter = 'all'; renderRjList(); };
+  bar.appendChild(allBtn);
+  categories.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'rj-cat-filter' + (rjActiveFilter === cat ? ' active' : '');
+    btn.textContent = cat;
+    btn.onclick = () => { rjActiveFilter = cat; renderRjList(); };
+    bar.appendChild(btn);
+  });
+}
+
+function renderRjList() {
   const list = document.getElementById('rjModalList');
   list.innerHTML = '';
 
-  if (!letters.length) {
-    list.innerHTML = '<p class="rj-empty">The jar is empty…<br>be the first to write ✦</p>';
-    document.getElementById('rjOverlay').classList.add('open');
-    return;
-  }
-
-  // Show all letters, unread first
+  // Sort: unread first, then newest
   const sorted = [...letters].sort((a,b) => {
     const aRead = isRead(a.id) ? 1 : 0;
     const bRead = isRead(b.id) ? 1 : 0;
     return aRead - bRead || b.ts - a.ts;
   });
 
-  sorted.forEach(l => {
-    const c = l.color || '#c8192a';
-    const hearted = heartIds.has(l.id);
-    const heartFill = hearted ? '#e05060' : 'none';
-    const heartCount = l.hearts > 0 ? l.hearts : '';
-    const unreadPip = !isRead(l.id) ? `<span class="rj-unread-pip"></span>` : '';
+  // Filter by active category
+  const filtered = rjActiveFilter === 'all' ? sorted : sorted.filter(l => l.category === rjActiveFilter);
 
-    const card = document.createElement('div');
-    card.className = 'rj-letter-card';
-    card.id = 'rjcard-' + l.id;
-    card.style.setProperty('--env-color', c);
-    card.innerHTML = `
-      <div class="rj-letter-header" onclick="toggleRjCard('${l.id}')">
-        <svg class="rj-env-icon" viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg">
-          <rect x="1" y="1" width="66" height="46" rx="3" fill="${c}" stroke="rgba(255,255,255,0.45)" stroke-width="2"/>
-          <path d="M1,1 L34,26 L67,1" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.4" stroke-linejoin="round"/>
-          <path d="M1,47 L24,28" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-          <path d="M67,47 L44,28" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-        </svg>
-        <span class="rj-sender">— ${escHtml(l.from)}</span>
-        ${unreadPip}
-        <span class="rj-heart-inline">
-          <svg viewBox="0 0 16 16" fill="${heartFill}" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 13.5s-6-3.8-6-8a4 4 0 0 1 6-3.46A4 4 0 0 1 14 5.5c0 4.2-6 8-6 8z" stroke="#e05060" stroke-width="1.2" stroke-linejoin="round"/>
-          </svg>
-          ${heartCount}
-        </span>
-        <span class="rj-chevron">▼</span>
-      </div>
-      <div class="rj-letter-body" id="rjbody-${l.id}">
-        <div class="rj-body-divider"></div>
-        <div class="rj-body-text">${escHtml(l.body)}</div>
-        <div class="rj-body-actions">
-          <button class="rj-heart-btn${hearted ? ' hearted' : ''}" data-id="${l.id}" onclick="toggleHeart('${l.id}', event); refreshRjCard('${l.id}')" title="Heart">
-            <svg viewBox="0 0 16 16" fill="${heartFill}" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 13.5s-6-3.8-6-8a4 4 0 0 1 6-3.46A4 4 0 0 1 14 5.5c0 4.2-6 8-6 8z" stroke="#e05060" stroke-width="1.3" stroke-linejoin="round"/>
-            </svg>
-            <span>${heartCount ? heartCount + ' ' : ''}heart</span>
-          </button>
-        </div>
-      </div>`;
-    list.appendChild(card);
+  if (!filtered.length) {
+    list.innerHTML = '<p class="rj-empty">No letters in this category yet ✦</p>';
+    return;
+  }
+
+  if (rjActiveFilter !== 'all') {
+    // No grouping needed — just render cards flat
+    filtered.forEach(l => list.appendChild(buildLetterCard(l)));
+    return;
+  }
+
+  // Group by category
+  const groups = new Map(); // category label → letters[]
+  filtered.forEach(l => {
+    const key = l.category || '✦ Uncategorised';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(l);
   });
 
+  // Put uncategorised last
+  const sortedGroups = [...groups.entries()].sort(([a], [b]) => {
+    if (a === '✦ Uncategorised') return 1;
+    if (b === '✦ Uncategorised') return -1;
+    return a.localeCompare(b);
+  });
+
+  sortedGroups.forEach(([groupName, groupLetters]) => {
+    const group = document.createElement('div');
+    group.className = 'rj-group';
+    const header = document.createElement('div');
+    header.className = 'rj-group-header';
+    header.innerHTML = `
+      <span class="rj-group-title">${escHtml(groupName)}</span>
+      <span class="rj-group-count">${groupLetters.length}</span>
+      <span class="rj-group-line"></span>
+      <span class="rj-group-chevron">▼</span>`;
+    header.onclick = () => group.classList.toggle('collapsed');
+    const body = document.createElement('div');
+    body.className = 'rj-group-body';
+    groupLetters.forEach(l => body.appendChild(buildLetterCard(l)));
+    group.appendChild(header);
+    group.appendChild(body);
+    list.appendChild(group);
+  });
+}
+
+function openReadJarModal() {
+  rjActiveFilter = 'all';
+  const list = document.getElementById('rjModalList');
+  list.innerHTML = '';
+
+  if (!letters.length) {
+    list.innerHTML = '<p class="rj-empty">The jar is empty…<br>be the first to write ✦</p>';
+    document.getElementById('rjCatBar').style.display = 'none';
+    document.getElementById('rjOverlay').classList.add('open');
+    return;
+  }
+
+  // Collect all used categories (exclude uncategorised from filter bar)
+  const usedCats = [...new Set(letters.map(l => l.category).filter(Boolean))].sort();
+  renderRjCatBar(usedCats);
+  renderRjList();
   document.getElementById('rjOverlay').classList.add('open');
 }
 
