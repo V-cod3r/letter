@@ -1044,7 +1044,7 @@ function makeCard(letter) {
   card.style.setProperty('--env-color', letter.color || '#c8192a');
   const dotHtml = !isRead(letter.id)
     ? `<span class="card-unread-dot" id="cdot-${letter.id}"></span>` : '';
-  card.innerHTML = `<div class="recent-from">${dotHtml}— ${escHtml(letter.from)}</div><div class="recent-preview">${escHtml(letter.body)}</div>`;
+  card.innerHTML = `<div class="recent-from">${dotHtml}— ${escHtml(letter.from)}</div>`;
   card.addEventListener('click', () => openRead(letter.id));
   return card;
 }
