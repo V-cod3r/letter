@@ -103,8 +103,8 @@
   /* LEFT */
   .hero-left { animation: fadeLeft 1.2s ease both; }
   @keyframes fadeLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
-  .eyebrow { font-size: 0.75rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--crimson-bright); margin-bottom: 22px; display: flex; align-items: center; gap: 10px; }
-  .eyebrow::before { content: ''; display: block; width: 28px; height: 1px; background: var(--crimson-bright); }
+  .eyebrow { font-size: 0.75rem; letter-spacing: 0.32em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 22px; display: flex; align-items: center; gap: 10px; }
+  .eyebrow::before { content: ''; display: block; width: 28px; height: 1px; background: var(--gold-light); }
   .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 4vw, 5rem); font-weight: 700; line-height: 1.08; color: var(--cream); margin-bottom: 22px; }
   .hero-title em { font-style: italic; color: var(--rose-pink); display: block; }
   .hero-desc { font-size: 1.1rem; line-height: 1.85; color: rgba(245,235,210,0.55); max-width: 350px; margin-bottom: 36px; }
@@ -628,6 +628,7 @@
   <nav>
     <a onclick="openModal()">Write a Letter</a>
     <a onclick="openCreateJar()">New Jar</a>
+    <a onclick="openFeedback()">Comments &amp; Suggestions</a>
   </nav>
 </header>
 
@@ -854,6 +855,23 @@
     <div class="modal-actions">
       <button class="btn-cancel-modal" onclick="closeDeleteJar()">Cancel</button>
       <button class="btn-danger" onclick="confirmDeleteJar()">Delete forever</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- FEEDBACK MODAL -->
+<div class="overlay" id="feedbackOverlay" onclick="handleFeedbackClick(event)">
+  <div class="modal create-jar-modal" style="max-width:460px;">
+    <div class="modal-title">Comments &amp; Suggestions</div>
+    <p style="font-size:0.95rem;line-height:1.7;color:rgba(245,235,210,0.55);margin-bottom:18px;">We'd love to hear your thoughts. Share ideas, report issues, or just say hello.</p>
+    <label for="feedbackName">Your name (optional)</label>
+    <input type="text" id="feedbackName" placeholder="Anonymous" maxlength="60"/>
+    <label for="feedbackMsg">Message</label>
+    <textarea id="feedbackMsg" placeholder="Type your feedback here…" maxlength="1000" rows="5" style="resize:vertical;min-height:100px;"></textarea>
+    <div class="modal-actions" style="margin-top:18px;">
+      <button class="btn-cancel-modal" onclick="closeFeedback()">Cancel</button>
+      <button class="btn-submit-modal" onclick="submitFeedback()">Send ✦</button>
     </div>
   </div>
 </div>
@@ -1325,6 +1343,30 @@ function openDeleteJar(jarId) {
 function closeDeleteJar() { document.getElementById('deleteJarOverlay').classList.remove('open'); pendingDeleteJarId = null; }
 function handleDeleteJarClick(e) { if (e.target === document.getElementById('deleteJarOverlay')) closeDeleteJar(); }
 
+// ── FEEDBACK ──
+function openFeedback() {
+  document.getElementById("feedbackName").value = "";
+  document.getElementById("feedbackMsg").value = "";
+  document.getElementById("feedbackOverlay").classList.add("open");
+}
+function closeFeedback() { document.getElementById("feedbackOverlay").classList.remove("open"); }
+function handleFeedbackClick(e) { if (e.target === document.getElementById("feedbackOverlay")) closeFeedback(); }
+async function submitFeedback() {
+  const name = document.getElementById("feedbackName").value.trim() || "Anonymous";
+  const msg  = document.getElementById("feedbackMsg").value.trim();
+  if (!msg) { document.getElementById("feedbackMsg").focus(); return; }
+  const entry = { name, msg, ts: Date.now() };
+  try {
+    const existing = await storage.get("feedback", true);
+    const list = existing ? JSON.parse(existing.value) : [];
+    list.push(entry);
+    await storage.set("feedback", JSON.stringify(list), true);
+  } catch {}
+  closeFeedback();
+  showToast("Thank you for your feedback ✦");
+}
+
+
 async function confirmDeleteJar() {
   if (!pendingDeleteJarId) return;
   const id = pendingDeleteJarId;
@@ -1728,7 +1770,7 @@ function startPolling() {
 })();
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeModal(); closeRead(); closeRjModal(); closeCreateJar(); closeDeleteJar(); closeJarDropdown(); }
+  if (e.key === 'Escape') { closeModal(); closeRead(); closeRjModal(); closeCreateJar(); closeDeleteJar(); closeFeedback(); closeJarDropdown(); }
 });
 
 init().then(() => {
